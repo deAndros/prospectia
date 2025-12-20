@@ -1,0 +1,42 @@
+{
+  "name": "prospect-compass-server",
+  "version": "1.0.0",
+  "description": "Backend for Prospect Compass",
+  "main": "src/index.js",
+  "type": "module",
+  "imports": {
+    "#controllers/*": "./src/controllers/*",
+    "#helpers/*": "./src/helpers/*",
+    "#models/*": "./src/models/*",
+    "#openapi/*": "./src/openapi/*",
+    "#routes/*": "./src/routes/*",
+    "#services/*": "./src/services/*",
+    "#util/*": "./src/util/*"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon --no-warnings src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.13",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-openapi-validator": "^5.5.8",
+    "helmet": "^8.1.0",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.3.4",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
