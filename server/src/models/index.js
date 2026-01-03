@@ -1,9 +1,12 @@
 import Lead from './Lead.js';
+import List from './List.js';
 
 export {
-    Lead
+    Lead,
+    List
 };
 
 export default {
-    Lead
+    Lead,
+    List
 };

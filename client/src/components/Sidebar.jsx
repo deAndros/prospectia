@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Home, Globe, Users, Settings } from 'lucide-react'
+import { Home, Globe, Users, Settings, List } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import clsx from 'clsx'
 
@@ -10,6 +10,7 @@ const Sidebar = () => {
     { name: 'Tablero', icon: Home, path: '/' },
     { name: 'Descubrimiento', icon: Globe, path: '/discovery' },
     { name: 'Prospectos', icon: Users, path: '/leads' },
+    { name: 'Listas', icon: List, path: '/lists' },
   ]
 
   return (
@@ -19,7 +20,7 @@ const Sidebar = () => {
           {brandImageOk ? (
             <img
               src="/brand-lockup.png"
-              alt="Prospect Compass"
+              alt="ProspectIA"
               className="h-10 w-auto"
               onLoad={() => setBrandImageOk(true)}
               onError={() => setBrandImageOk(false)}
@@ -27,10 +28,7 @@ const Sidebar = () => {
           ) : (
             <span className="leading-tight">
               <span className="block font-['Outfit'] font-black text-2xl tracking-tight text-white">
-                Prospect
-              </span>
-              <span className="block font-['Outfit'] font-medium text-2xl tracking-tight text-sky-300">
-                Compass
+                ProspectIA
               </span>
             </span>
           )}

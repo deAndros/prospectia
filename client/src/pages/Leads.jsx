@@ -1,6 +1,7 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Search, LayoutGrid, List as ListIcon, MapPin, Briefcase, Loader2, Sparkles, Calculator, AlertCircle } from 'lucide-react';
 import { useLeads, useAnalyzeLead } from '../hooks/useLeads';
+import { useLists } from '../hooks/useLists';
 
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,8 +21,9 @@ const getScoreTone = (score) => {
 };
 
 const Leads = () => {
-    const { data: leads = [], isLoading, error: leadsError } = useLeads();
-    const { mutateAsync: analyzeLead, isPending: analyzingLeadIdRaw, error: analyzeMutationError, reset: resetAnalyze } = useAnalyzeLead();
+    const { data: leads = [] } = useLeads();
+    const { data: lists = [] } = useLists();
+    const { mutateAsync: analyzeLead } = useAnalyzeLead();
 
     const [selectedLead, setSelectedLead] = useState(null);
     const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
@@ -32,22 +34,6 @@ const Leads = () => {
     const [countryFilter, setCountryFilter] = useState('');
     const [nicheFilter, setNicheFilter] = useState('');
 
-    const handleAnalyze = async (e, lead) => {
-        e.stopPropagation(); // Prevent opening modal
-        if (analyzingLeadIdRaw) return;
-
-        setAnalysisError(null);
-        try {
-            await analyzeLead(lead._id);
-        } catch (error) {
-            setAnalysisError(error.message || 'No se pudo completar el análisis automáticamente. Intenta nuevamente.');
-        }
-    };
-
-    const analyzingLeadId = analyzingLeadIdRaw ? leads.find(l => l._id === selectedLead?._id)?._id : null;
-    // Wait, the original analyzingLeadId was storing the ID of the lead being analyzed.
-    // I can just use a local state for that since useAnalyzeLead is a mutation.
-    // Actually, I'll stick to the previous pattern if possible.
     const [localAnalyzingId, setLocalAnalyzingId] = useState(null);
 
     const handleAnalyzeImproved = async (e, lead) => {
@@ -218,6 +204,15 @@ const Leads = () => {
                                                 {lead.name}
                                             </h3>
                                             <p className="text-zinc-400 text-sm mt-1.5 font-medium truncate">{lead.type}</p>
+
+                                            {/* List Membership Badges */}
+                                            <div className="flex flex-wrap gap-1 mt-3">
+                                                {lists.filter(l => (l.prospects || []).includes(lead._id)).map(l => (
+                                                    <span key={l._id} className="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-[10px] font-bold uppercase tracking-tight">
+                                                        {l.name}
+                                                    </span>
+                                                ))}
+                                            </div>
                                         </div>
 
                                         <div className="mt-auto pt-4 border-t border-white/5 flex items-end justify-between gap-2">
@@ -284,6 +279,7 @@ const Leads = () => {
                                             <th className="px-6 py-4 font-medium">Organización</th>
                                             <th className="px-6 py-4 font-medium">Ubicación</th>
                                             <th className="px-6 py-4 font-medium">Rubro</th>
+                                            <th className="px-6 py-4 font-medium">Listas</th>
                                             <th className="px-6 py-4 font-medium">Estado</th>
                                             <th className="px-6 py-4 font-medium text-right">Fecha</th>
                                         </tr>
@@ -319,6 +315,18 @@ const Leads = () => {
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-zinc-300">
                                                     {lead.niche}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex flex-wrap gap-1 max-w-[200px]">
+                                                        {lists.filter(l => (l.prospects || []).includes(lead._id)).map(l => (
+                                                            <span key={l._id} className="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-[9px] font-bold uppercase overflow-hidden text-ellipsis whitespace-nowrap">
+                                                                {l.name}
+                                                            </span>
+                                                        ))}
+                                                        {lists.filter(l => (l.prospects || []).includes(lead._id)).length === 0 && (
+                                                            <span className="text-zinc-600 text-[10px]">—</span>
+                                                        )}
+                                                    </div>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <span className="inline-flex px-2 py-1 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">

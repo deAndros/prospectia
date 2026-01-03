@@ -66,13 +66,6 @@ const Discovery = () => {
   } = useSaveLeads();
 
   const error = discoverError?.message || saveError?.message;
-  const setError = (msg) => {
-    // Manual error helper for validation
-    if (msg === null) {
-      resetDiscover();
-      resetSave();
-    }
-  };
 
   // Filtering & Sorting
   const [filterText, setFilterText] = useState(stored?.filterText || '')
@@ -155,7 +148,7 @@ const Discovery = () => {
         // Always store raw results; filters (e.g. "Con redes") are applied in the UI layer.
         setLeads(incoming.filter(hasValidLeadUrl))
       }
-    } catch (err) {
+    } catch {
       // Error handled by mutation
     }
   }
@@ -224,7 +217,7 @@ const Discovery = () => {
         setPendingOverwriteDuplicates(duplicates)
         setConfirmType('overwrite')
       }
-    } catch (err) {
+    } catch {
       // Error handled by mutation
     }
   }
@@ -297,7 +290,7 @@ const Discovery = () => {
             })
             const stats2 = res2?.stats || { new: 0, updated: 0 }
             setSuccessMsg(`Sobreescritos: ${stats2.updated}.`)
-          } catch (err) {
+    } catch {
             // Error handled by mutation
           } finally {
             setPendingOverwriteLeads([])

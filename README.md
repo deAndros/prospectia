@@ -1,14 +1,14 @@
-# 🧭 Prospect Compass
+# ProspectIA
 
 **Plataforma inteligente de descubrimiento y priorización de leads impulsada por IA**
 
-Prospect Compass es una aplicación full-stack MERN que revoluciona el proceso de prospección comercial mediante inteligencia artificial. Utiliza Google Gemini con búsqueda en tiempo real para descubrir, enriquecer y priorizar automáticamente partners estratégicos potenciales.
+ProspectIA es una aplicación full-stack MERN que revoluciona el proceso de prospección comercial mediante inteligencia artificial. Utiliza Google Gemini con búsqueda en tiempo real para descubrir, enriquecer y priorizar automáticamente partners estratégicos potenciales.
 
 ---
 
-## ✨ Características Principales
+## Características Principales
 
-### 🔍 **Descubrimiento Inteligente de Leads**
+### **Descubrimiento Inteligente de Leads**
 
 - **Búsqueda impulsada por IA**: Utiliza Google Gemini 2.0 Flash con Google Search Grounding para encontrar prospectos relevantes en tiempo real
 - **Filtros avanzados**: Búsqueda por país, industria/rubro y cantidad de resultados
@@ -19,7 +19,7 @@ Prospect Compass es una aplicación full-stack MERN que revoluciona el proceso d
   - Conteo de seguidores en cada plataforma
   - Señales de interés (e-learning, tecnología, capacitación)
 
-### 📊 **Sistema de Scoring On-Demand**
+### **Sistema de Scoring On-Demand**
 
 - **Análisis de calidad**: Calcula un score de 0-100 basado en 6 criterios clave
 - **Clasificación automática**: Segmenta leads en buckets A, B, C o Nurture
@@ -31,7 +31,7 @@ Prospect Compass es una aplicación full-stack MERN que revoluciona el proceso d
   - **Señales de IA** (15 pts): Indicadores de adopción tecnológica
   - **Información de Contacto** (5 pts): Disponibilidad de email y teléfono
 
-### 🎯 **Gestión de Prospectos**
+### **Gestión de Prospectos**
 
 - **Vista dual**: Modo grid (tarjetas) y modo lista
 - **Filtros dinámicos**: Por nombre, país, rubro
@@ -39,7 +39,7 @@ Prospect Compass es una aplicación full-stack MERN que revoluciona el proceso d
 - **Edición inline**: Actualiza información directamente desde el modal de detalles
 - **Eliminación segura**: Soft delete para mantener historial
 
-### 🎨 **Interfaz Premium**
+### **Interfaz Premium**
 
 - **Diseño moderno**: Dark mode con gradientes sutiles y glassmorphism
 - **Animaciones fluidas**: Transiciones suaves con Framer Motion
@@ -48,7 +48,7 @@ Prospect Compass es una aplicación full-stack MERN que revoluciona el proceso d
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 ### **Frontend**
 
@@ -76,7 +76,7 @@ Prospect Compass es una aplicación full-stack MERN que revoluciona el proceso d
 
 ---
 
-## 🚀 Instalación y Configuración
+## Instalación y Configuración
 
 ### **Prerrequisitos**
 

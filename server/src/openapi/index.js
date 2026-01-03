@@ -11,7 +11,7 @@ const { PORT = 5000, DOMAIN = `http://localhost:${PORT}` } = process.env;
 export default {
     openapi: '3.0.1',
     info: {
-        title: pkg.description || 'Prospect Compass API',
+        title: pkg.description || 'ProspectIA API',
         version: pkg.version
     },
     servers: [

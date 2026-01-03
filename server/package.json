@@ -1,7 +1,7 @@
 {
   "name": "prospect-compass-server",
   "version": "1.0.0",
-  "description": "Backend for Prospect Compass",
+  "description": "Backend for ProspectIA",
   "main": "src/index.js",
   "type": "module",
   "imports": {

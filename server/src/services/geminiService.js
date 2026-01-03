@@ -1,6 +1,6 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 
 export const discoverLeads = async (country, niche, maxResults = 5) => {
   try {
@@ -13,8 +13,8 @@ export const discoverLeads = async (country, niche, maxResults = 5) => {
           googleSearch: {},
         },
       ],
-    });
-
+    })
+    //TODO:Evaluar posibilidad de determinar fecha de ultima publicación en cada red social esto es para evaluar si la entidad está activa o no en la red social.
     const prompt = `
       Encuentra ${maxResults} organizaciones, instituciones, empresas y/o entidades oriundas de ${country} que operen en el rubro "${niche}" y que puedan estar interesadas en vender cursos de e-learning. 
       
@@ -33,7 +33,7 @@ export const discoverLeads = async (country, niche, maxResults = 5) => {
       - No inventes urls de redes sociales, asegurate que las redes sociales sean perfiles activos y que estén asociados a la entidad.
       
       REDES SOCIALES:
-      - Busca activamente perfiles en LinkedIn, Instagram, Facebook y Twitter/X que sean de las entidades encontrada.
+      - Busca activamente perfiles en LinkedIn, Instagram, Facebook, Twitter/X y YouTube que sean de las entidades encontradas.
       - **ESTIMA LA CANTIDAD DE SEGUIDORES DE CADA RED SOCIAL ENCONTRADA**: Estima una cantidad de seguidores para cada red social y añadelo al campo "followers" que retornas para esa red social. Por ejemplo:
                 {
                     "network": "LinkedIn",
@@ -47,35 +47,35 @@ export const discoverLeads = async (country, niche, maxResults = 5) => {
       name, url, email, phone, country, niche, type, social_media, signals.
       
       No incluyas markdown ni explicaciones, solo el string JSON válido.
-    `;
+    `
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const result = await model.generateContent(prompt)
+    const response = await result.response
+    const text = response.text()
 
     // Clean up potential markdown formatting in response (```json ... ```)
     const jsonStr = text
       .replace(/```json/g, '')
       .replace(/```/g, '')
-      .trim();
+      .trim()
 
-    let leads = JSON.parse(jsonStr);
+    let leads = JSON.parse(jsonStr)
 
     // PROGRAMMATIC FILTERING (The "Enforcer")
     // Filter out leads that don't meet the strict criteria:
     // 1. Must have an official URL (not null)
     // 2. Must have at least one social media profile
     const filteredLeads = leads.filter((lead) => {
-      const hasUrl = typeof lead?.url === 'string' && lead.url.trim().length > 0;
+      const hasUrl = typeof lead?.url === 'string' && lead.url.trim().length > 0
       // We require an official URL because uniqueness + selection in the UI relies on `url`.
-      return hasUrl;
-    });
+      return hasUrl
+    })
 
     // Sanitize leads to ensure critical fields are in expected format
     return filteredLeads.map((lead) => ({
       ...lead,
       signals: Array.isArray(lead.signals) ? lead.signals : [],
-    }));
+    }))
   } catch (error) {
     if (
       error.message.includes('429') ||
@@ -84,19 +84,20 @@ export const discoverLeads = async (country, niche, maxResults = 5) => {
       throw {
         code: 'QUOTA_EXCEEDED',
         message: 'Free tier quota exceeded. Please try again in a few minutes.',
-      };
+      }
     }
-    throw new Error('Failed to discover leads via Gemini.');
+    throw new Error('Failed to discover leads via Gemini.')
   }
-};
+}
 
+//TODO: Brindar posibilidad de recalcular score de lead en caso de que el agente cambie las redes sociales y ponga las correctas
 export const analyzeLead = async (lead) => {
   try {
     const model = genAI.getGenerativeModel({
       model: 'gemini-2.0-flash-exp',
       apiVersion: 'v1beta',
       tools: [{ googleSearch: {} }],
-    });
+    })
 
     const prompt = `
       Act as a Senior Business Development Analyst.
@@ -126,7 +127,7 @@ I will provide you with data about a "Lead" (a potential partner). You must anal
 ### SCORING RUBRIC (1-10):
 
 **1. Community Engagement (1-10):**
-Does this entity have an active audience to whom they can sell our courses?
+Does this entity have an active audience in their social media profiles to whom they can sell our courses?
 - 1-3: Static website, no visible community or interaction.
 - 4-6: Moderate presence, occasional posts.
 - 7-10: Very active community, recent comments, visible testimonials, high estimated traffic/influence.
@@ -168,18 +169,18 @@ Important: values intended for display to end-users MUST be in Spanish (LatAm), 
   "detected_verticals": ["List of 'Our Catalog Categories' that match this lead"],
   "final_recommendation": "Select one: Descartar | Revisar | Contacto prioritario"
 }
-    `;
+    `
     // Si no encuentras datos, usa tu mejor estimación conservadora o 0.
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const result = await model.generateContent(prompt)
+    const response = await result.response
+    const text = response.text()
     const jsonStr = text
       .replace(/```json/g, '')
       .replace(/```/g, '')
-      .trim();
+      .trim()
 
-    return JSON.parse(jsonStr);
+    return JSON.parse(jsonStr)
   } catch (error) {
     if (
       error?.message?.includes('429') ||
@@ -189,17 +190,16 @@ Important: values intended for display to end-users MUST be in Spanish (LatAm), 
         code: 'QUOTA_EXCEEDED',
         message:
           'Se ha excedido la cuota gratuita de la IA. Por favor espera unos minutos e intenta nuevamente.',
-      };
+      }
     }
 
     throw new Error(
       'No se pudo completar el análisis automáticamente. Intenta nuevamente.'
-    );
+    )
   }
-};
+}
 
 export default {
   discoverLeads,
-  analyzeLead
-};
-
+  analyzeLead,
+}

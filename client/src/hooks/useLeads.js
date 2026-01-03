@@ -67,8 +67,7 @@ export const useAnalyzeLead = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id) => leadsApi.analyze(id),
-    onSuccess: (data) => {
-      // Update specific lead in the cache if needed, or just invalidate
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leads'] });
     },
   });

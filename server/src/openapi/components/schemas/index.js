@@ -72,6 +72,39 @@ export default {
             }
         }
     },
+    List: {
+        type: 'object',
+        properties: {
+            _id: { type: 'string' },
+            name: { type: 'string' },
+            prospects: {
+                type: 'array',
+                items: { type: 'string' }
+            },
+            status: {
+                type: 'string',
+                enum: ['Active', 'Inactive']
+            },
+            createdBy: { type: 'string' },
+            filter: {
+                type: 'object',
+                properties: {
+                    country: { type: 'string' },
+                    niche: { type: 'string' },
+                    scoreMin: { type: 'number' },
+                    scoreMax: { type: 'number' }
+                }
+            },
+            createdAt: {
+                type: 'string',
+                format: 'date-time'
+            },
+            updatedAt: {
+                type: 'string',
+                format: 'date-time'
+            }
+        }
+    },
     ArrayString: {
         type: 'array',
         uniqueItems: true,

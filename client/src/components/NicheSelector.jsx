@@ -198,7 +198,7 @@ const NicheSelector = ({ value, onChange }) => {
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
                     onBlur={handleBlur}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-3 pl-12 text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all placeholder:text-zinc-600 shadow-inner"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-3 pl-12 text-white text-base focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all placeholder:text-zinc-600 shadow-inner h-[50px]"
                 />
                 <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={18} />
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={18} />

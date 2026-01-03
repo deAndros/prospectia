@@ -2,17 +2,20 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Sidebar from './components/Sidebar';
 import Discovery from './pages/Discovery';
 import Leads from './pages/Leads';
+import Lists from './pages/Lists';
 
 function App() {
   return (
     <Router>
-      <div className="flex min-h-screen bg-background text-text font-sans">
+      <div className="flex min-h-screen text-zinc-50 relative">
+        <div className="bg-mesh" />
         <Sidebar />
-        <main className="ml-64 flex-1 p-8">
+        <main className="ml-64 flex-1 p-8 max-w-[1600px] w-full mx-auto relative z-10">
           <Routes>
             <Route path="/" element={<Navigate to="/discovery" replace />} />
             <Route path="/discovery" element={<Discovery />} />
             <Route path="/leads" element={<Leads />} />
+            <Route path="/lists" element={<Lists />} />
           </Routes>
         </main>
       </div>

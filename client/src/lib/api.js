@@ -56,4 +56,13 @@ export const leadsApi = {
   analyze: (id) => apiFetch(`/api/leads/${id}/analyze`, { method: 'POST' }),
 };
 
+export const listsApi = {
+  getAll: () => apiFetch('/api/lists'),
+  getOptions: () => apiFetch('/api/lists/options'),
+  create: (data) => apiFetch('/api/lists', { method: 'POST', body: data }),
+  update: (id, data) => apiFetch(`/api/lists/${id}`, { method: 'PUT', body: data }),
+  delete: (id) => apiFetch(`/api/lists/${id}`, { method: 'DELETE' }),
+  getOne: (id) => apiFetch(`/api/lists/${id}`),
+};
+
 export default apiFetch;
