@@ -1,4 +1,5 @@
-import Lead from '#models/Lead.js';
+import mongoose from 'mongoose';
+import Lead from '#models/leadModel.js';
 import * as geminiService from './geminiService.js';
 
 /**
@@ -120,6 +121,7 @@ export const updateLead = async (id, updateData) => {
  * Delete lead (logical delete)
  */
 export const deleteLead = async (id) => {
+    // 1. Mark as logically deleted
     const lead = await Lead.findByIdAndUpdate(
         id,
         { isDeleted: true },
@@ -128,6 +130,14 @@ export const deleteLead = async (id) => {
     if (!lead) {
         throw new Error('Lead not found');
     }
+
+    // 2. Remove from all lists
+    const List = mongoose.model('List');
+    await List.updateMany(
+        { prospects: id },
+        { $pull: { prospects: id } }
+    );
+
     return lead;
 };
 

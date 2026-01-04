@@ -1,4 +1,4 @@
-import * as leadsService from '#services/leads.js';
+import * as leadsService from '#services/leadService.js';
 import logger from '#helpers/logger.js';
 
 /**

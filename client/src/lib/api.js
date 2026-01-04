@@ -47,7 +47,7 @@ export async function apiFetch(endpoint, options = {}) {
 /**
  * Lead API methods
  */
-export const leadsApi = {
+export const leadApi = {
   discover: (data) => apiFetch('/api/leads/discover', { body: data }),
   save: (data) => apiFetch('/api/leads/save', { body: data }),
   getAll: () => apiFetch('/api/leads'),
@@ -56,7 +56,7 @@ export const leadsApi = {
   analyze: (id) => apiFetch(`/api/leads/${id}/analyze`, { method: 'POST' }),
 };
 
-export const listsApi = {
+export const listApi = {
   getAll: () => apiFetch('/api/lists'),
   getOptions: () => apiFetch('/api/lists/options'),
   create: (data) => apiFetch('/api/lists', { method: 'POST', body: data }),

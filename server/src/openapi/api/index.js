@@ -1,7 +1,7 @@
-import leads from './leads.js';
-import lists from './lists.js';
+import leadApi from './leadApi.js';
+import listApi from './listApi.js';
 
 export default {
-    ...leads,
-    ...lists
+    ...leadApi,
+    ...listApi
 };

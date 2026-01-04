@@ -1,4 +1,4 @@
-import LeadsController from '#controllers/leads.js';
+import LeadsController from '#controllers/leadController.js';
 
 export const discover = LeadsController.discover;
 export const save = LeadsController.save;

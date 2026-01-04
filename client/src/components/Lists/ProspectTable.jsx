@@ -1,12 +1,14 @@
 import { useMemo, useState, useEffect } from 'react'
-import { Search, Plus, ChevronLeft, ChevronRight, Users, Briefcase, LayoutGrid, ArrowUpDown } from 'lucide-react'
+import { Search, Plus, ChevronLeft, ChevronRight, Users, Briefcase, LayoutGrid, List as ListIcon, ArrowUpDown } from 'lucide-react'
 import clsx from 'clsx'
-import { useAnalyzeLead } from '../../hooks/useLeads'
+import { useAnalyzeLead } from '../../hooks/leadHooks'
 import CountrySelector from '../CountrySelector'
 import NicheSelector from '../NicheSelector'
 import ProspectTableRow from './ProspectTableRow'
+import LeadsGrid from '../Leads/LeadsGrid'
 
-const ProspectTable = ({ leads, selectedList, onRemove, onAddClick, onSelectLead }) => {
+const ProspectTable = ({ leads, selectedList, lists, onRemove, onDelete, onAddClick, onSelectLead }) => {
+    const [viewMode, setViewMode] = useState('table') // 'table' | 'grid'
     const [search, setSearch] = useState('')
     const [countryFilter, setCountryFilter] = useState('')
     const [nicheFilter, setNicheFilter] = useState('')
@@ -148,86 +150,122 @@ const ProspectTable = ({ leads, selectedList, onRemove, onAddClick, onSelectLead
                             <span>Añadir prospecto</span>
                         </button>
                     )}
+
+                    {/* View Toggle */}
+                    <div className="flex bg-white/5 p-1 rounded-2xl border border-white/10 h-[50px]">
+                        <button
+                            onClick={() => setViewMode('table')}
+                            className={clsx(
+                                "px-3 rounded-xl transition-all flex items-center justify-center",
+                                viewMode === 'table' ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "text-zinc-500 hover:text-white"
+                            )}
+                            title="Vista de Tabla"
+                        >
+                            <ListIcon size={20} />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={clsx(
+                                "px-3 rounded-xl transition-all flex items-center justify-center",
+                                viewMode === 'grid' ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "text-zinc-500 hover:text-white"
+                            )}
+                            title="Vista de Tarjetas"
+                        >
+                            <LayoutGrid size={20} />
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div className="flex-1 overflow-y-auto custom-scrollbar">
-                <table className="w-full text-left border-separate border-spacing-y-2">
-                    <thead>
-                        <tr className="text-[11px] font-black text-zinc-500 uppercase tracking-widest">
-                            <th
-                                className="px-6 py-4 font-black cursor-pointer hover:text-white transition-colors group/h"
-                                onClick={() => handleSort('name')}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <div className="w-5 h-5 rounded border-2 border-zinc-800 flex items-center justify-center group-hover/h:border-indigo-500/50"></div>
+                {viewMode === 'table' ? (
+                    <table className="w-full text-left border-separate border-spacing-y-2">
+                        <thead>
+                            <tr className="text-[11px] font-black text-zinc-500 uppercase tracking-widest">
+                                <th
+                                    className="px-6 py-4 font-black cursor-pointer hover:text-white transition-colors group/h"
+                                    onClick={() => handleSort('name')}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-5 h-5 rounded border-2 border-zinc-800 flex items-center justify-center group-hover/h:border-indigo-500/50"></div>
+                                        <div className="flex items-center gap-1">
+                                            <Users size={14} />
+                                            <span>Nombre</span>
+                                            <ArrowUpDown size={12} className={clsx("ml-1 transition-opacity", sortConfig.key === 'name' ? "opacity-100 text-indigo-400" : "opacity-0 group-hover/h:opacity-50")} />
+                                        </div>
+                                    </div>
+                                </th>
+                                <th
+                                    className="px-6 py-4 font-black cursor-pointer hover:text-white transition-colors group/h"
+                                    onClick={() => handleSort('type')}
+                                >
                                     <div className="flex items-center gap-1">
-                                        <Users size={14} />
-                                        <span>Nombre</span>
-                                        <ArrowUpDown size={12} className={clsx("ml-1 transition-opacity", sortConfig.key === 'name' ? "opacity-100 text-indigo-400" : "opacity-0 group-hover/h:opacity-50")} />
+                                        <Briefcase size={14} />
+                                        <span>Tipo</span>
+                                        <ArrowUpDown size={12} className={clsx("ml-1 transition-opacity", sortConfig.key === 'type' ? "opacity-100 text-indigo-400" : "opacity-0 group-hover/h:opacity-50")} />
                                     </div>
-                                </div>
-                            </th>
-                            <th
-                                className="px-6 py-4 font-black cursor-pointer hover:text-white transition-colors group/h"
-                                onClick={() => handleSort('type')}
-                            >
-                                <div className="flex items-center gap-1">
-                                    <Briefcase size={14} />
-                                    <span>Tipo</span>
-                                    <ArrowUpDown size={12} className={clsx("ml-1 transition-opacity", sortConfig.key === 'type' ? "opacity-100 text-indigo-400" : "opacity-0 group-hover/h:opacity-50")} />
-                                </div>
-                            </th>
-                            <th
-                                className="px-6 py-4 font-black cursor-pointer hover:text-white transition-colors group/h"
-                                onClick={() => handleSort('rubro')}
-                            >
-                                <div className="flex items-center gap-1">
-                                    <LayoutGrid size={14} />
-                                    <span>Rubro</span>
-                                    <ArrowUpDown size={12} className={clsx("ml-1 transition-opacity", sortConfig.key === 'rubro' ? "opacity-100 text-indigo-400" : "opacity-0 group-hover/h:opacity-50")} />
-                                </div>
-                            </th>
-                            <th
-                                className="px-6 py-4 font-black text-center cursor-pointer hover:text-white transition-colors group/h"
-                                onClick={() => handleSort('score')}
-                            >
-                                <div className="flex items-center justify-center gap-1">
-                                    <span>Score</span>
-                                    <ArrowUpDown size={12} className={clsx("ml-1 transition-opacity", sortConfig.key === 'score' ? "opacity-100 text-indigo-400" : "opacity-0 group-hover/h:opacity-50")} />
-                                </div>
-                            </th>
-                            <th className="px-6 py-4 font-black text-right pr-10">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {paginatedLeads.map((lead) => (
-                            <ProspectTableRow
-                                key={lead._id}
-                                lead={lead}
-                                onSelectLead={onSelectLead}
-                                onRemove={onRemove}
-                                onAnalyze={handleAnalyze}
-                                analyzingId={analyzingId}
-                            />
-                        ))}
-                        {paginatedLeads.length === 0 && (
-                            <tr>
-                                <td colSpan={5} className="py-20 text-center">
-                                    <div className="flex flex-col items-center gap-3">
-                                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-zinc-600">
-                                            <Search size={32} />
-                                        </div>
-                                        <div>
-                                            <p className="text-white font-bold">No se encontraron prospectos</p>
-                                            <p className="text-zinc-500 text-sm">Intenta ajustar tus términos de búsqueda.</p>
-                                        </div>
+                                </th>
+                                <th
+                                    className="px-6 py-4 font-black cursor-pointer hover:text-white transition-colors group/h"
+                                    onClick={() => handleSort('rubro')}
+                                >
+                                    <div className="flex items-center gap-1">
+                                        <LayoutGrid size={14} />
+                                        <span>Rubro</span>
+                                        <ArrowUpDown size={12} className={clsx("ml-1 transition-opacity", sortConfig.key === 'rubro' ? "opacity-100 text-indigo-400" : "opacity-0 group-hover/h:opacity-50")} />
                                     </div>
-                                </td>
+                                </th>
+                                <th
+                                    className="px-6 py-4 font-black text-center cursor-pointer hover:text-white transition-colors group/h"
+                                    onClick={() => handleSort('score')}
+                                >
+                                    <div className="flex items-center justify-center gap-1">
+                                        <span>Score</span>
+                                        <ArrowUpDown size={12} className={clsx("ml-1 transition-opacity", sortConfig.key === 'score' ? "opacity-100 text-indigo-400" : "opacity-0 group-hover/h:opacity-50")} />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-4 font-black text-right pr-10">Acciones</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {paginatedLeads.map((lead) => (
+                                <ProspectTableRow
+                                    key={lead._id}
+                                    lead={lead}
+                                    onSelectLead={onSelectLead}
+                                    onRemove={onRemove}
+                                    onDelete={onDelete}
+                                    onAnalyze={handleAnalyze}
+                                    analyzingId={analyzingId}
+                                />
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <div className="pt-2">
+                        <LeadsGrid
+                            leads={paginatedLeads}
+                            onSelectLead={onSelectLead}
+                            onAnalyze={handleAnalyze}
+                            analyzingId={analyzingId}
+                            lists={lists}
+                        />
+                    </div>
+                )}
+
+                {paginatedLeads.length === 0 && (
+                    <div className="py-20 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-zinc-600">
+                                <Search size={32} />
+                            </div>
+                            <div>
+                                <p className="text-white font-bold">No se encontraron prospectos</p>
+                                <p className="text-zinc-500 text-sm">Intenta ajustar tus términos de búsqueda.</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Main Pagination Controls at Bottom */}

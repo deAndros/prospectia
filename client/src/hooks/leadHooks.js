@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { leadsApi } from '../lib/api';
+import { leadApi } from '../lib/api';
 
 /**
  * Hook to fetch all leads
@@ -7,7 +7,7 @@ import { leadsApi } from '../lib/api';
 export const useLeads = () => {
   return useQuery({
     queryKey: ['leads'],
-    queryFn: leadsApi.getAll,
+    queryFn: leadApi.getAll,
   });
 };
 
@@ -16,7 +16,7 @@ export const useLeads = () => {
  */
 export const useDiscoverLeads = () => {
   return useMutation({
-    mutationFn: (data) => leadsApi.discover(data),
+    mutationFn: (data) => leadApi.discover(data),
   });
 };
 
@@ -26,7 +26,7 @@ export const useDiscoverLeads = () => {
 export const useSaveLeads = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data) => leadsApi.save(data),
+    mutationFn: (data) => leadApi.save(data),
     onSuccess: () => {
       // Invalidate leads list to trigger a refetch
       queryClient.invalidateQueries({ queryKey: ['leads'] });
@@ -40,7 +40,7 @@ export const useSaveLeads = () => {
 export const useUpdateLead = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }) => leadsApi.update(id, data),
+    mutationFn: ({ id, data }) => leadApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leads'] });
     },
@@ -53,7 +53,7 @@ export const useUpdateLead = () => {
 export const useDeleteLead = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id) => leadsApi.delete(id),
+    mutationFn: (id) => leadApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leads'] });
     },
@@ -66,7 +66,7 @@ export const useDeleteLead = () => {
 export const useAnalyzeLead = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id) => leadsApi.analyze(id),
+    mutationFn: (id) => leadApi.analyze(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leads'] });
     },

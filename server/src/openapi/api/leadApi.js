@@ -1,91 +1,26 @@
 export default {
-    '/api/lists': {
-        get: {
-            operationId: 'getAll',
-            'x-eov-operation-handler': 'handlers/lists',
-            summary: 'Get all active lists',
-            security: [],
-            responses: {
-                200: {
-                    description: 'Success',
-                    content: {
-                        'application/json': {
-                            schema: {
-                                type: 'array',
-                                items: { $ref: '#/components/schemas/List' }
-                            }
-                        }
-                    }
-                },
-                default: {
-                    description: 'Error',
-                    content: {
-                        'application/json': {
-                            schema: { $ref: '#/components/schemas/Error' }
-                        }
-                    }
-                }
-            }
-        },
+    '/api/leads/discover': {
         post: {
-            operationId: 'create',
-            'x-eov-operation-handler': 'handlers/lists',
-            summary: 'Create a new list',
-            security: [],
+            operationId: 'discover',
+            'x-eov-operation-handler': 'handlers/leadHandler',
+            summary: 'Discover leads using AI',
+            security: [], // No authentication required
             requestBody: {
                 required: true,
                 content: {
                     'application/json': {
                         schema: {
                             type: 'object',
-                            required: ['name'],
+                            required: ['country', 'niche'],
                             properties: {
-                                name: { type: 'string' },
-                                prospects: {
-                                    type: 'array',
-                                    items: { type: 'string' }
-                                },
                                 country: { type: 'string' },
                                 niche: { type: 'string' },
-                                scoreMin: { type: 'number' },
-                                scoreMax: { type: 'number' }
+                                maxResults: { type: 'integer', default: 5 }
                             }
                         }
                     }
                 }
             },
-            responses: {
-                201: {
-                    description: 'Created',
-                    content: {
-                        'application/json': {
-                            schema: {
-                                type: 'object',
-                                properties: {
-                                    success: { type: 'boolean' },
-                                    list: { $ref: '#/components/schemas/List' }
-                                }
-                            }
-                        }
-                    }
-                },
-                default: {
-                    description: 'Error',
-                    content: {
-                        'application/json': {
-                            schema: { $ref: '#/components/schemas/Error' }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    '/api/lists/options': {
-        get: {
-            operationId: 'options',
-            'x-eov-operation-handler': 'handlers/lists',
-            summary: 'Get available niches and countries for list creation',
-            security: [],
             responses: {
                 200: {
                     description: 'Success',
@@ -94,13 +29,10 @@ export default {
                             schema: {
                                 type: 'object',
                                 properties: {
-                                    countries: {
+                                    success: { type: 'boolean' },
+                                    leads: {
                                         type: 'array',
-                                        items: { type: 'string' }
-                                    },
-                                    niches: {
-                                        type: 'array',
-                                        items: { type: 'string' }
+                                        items: { $ref: '#/components/schemas/Lead' }
                                     }
                                 }
                             }
@@ -118,76 +50,27 @@ export default {
             }
         }
     },
-    '/api/lists/{id}': {
-        get: {
-            operationId: 'getOne',
-            'x-eov-operation-handler': 'handlers/lists',
-            summary: 'Get list by id',
-            security: [],
-            parameters: [
-                {
-                    name: 'id',
-                    in: 'path',
-                    required: true,
-                    schema: { type: 'string' }
-                }
-            ],
-            responses: {
-                200: {
-                    description: 'Success',
-                    content: {
-                        'application/json': {
-                            schema: { $ref: '#/components/schemas/List' }
-                        }
-                    }
-                },
-                404: {
-                    description: 'Not found',
-                    content: {
-                        'application/json': {
-                            schema: { $ref: '#/components/schemas/Error' }
-                        }
-                    }
-                },
-                default: {
-                    description: 'Error',
-                    content: {
-                        'application/json': {
-                            schema: { $ref: '#/components/schemas/Error' }
-                        }
-                    }
-                }
-            }
-        },
-        put: {
-            operationId: 'update',
-            'x-eov-operation-handler': 'handlers/lists',
-            summary: 'Update list name or prospects (Custom only)',
-            security: [],
-            parameters: [
-                {
-                    name: 'id',
-                    in: 'path',
-                    required: true,
-                    schema: { type: 'string' }
-                }
-            ],
+    '/api/leads/save': {
+        post: {
+            operationId: 'save',
+            'x-eov-operation-handler': 'handlers/leadHandler',
+            summary: 'Save leads to database',
+            security: [], // No authentication required
             requestBody: {
                 required: true,
                 content: {
                     'application/json': {
                         schema: {
                             type: 'object',
+                            required: ['leads'],
                             properties: {
-                                name: { type: 'string' },
-                                prospects: {
+                                leads: {
                                     type: 'array',
-                                    items: { type: 'string' }
+                                    items: { type: 'object' }
                                 },
                                 country: { type: 'string' },
                                 niche: { type: 'string' },
-                                scoreMin: { type: 'number' },
-                                scoreMax: { type: 'number' }
+                                overwrite: { type: 'boolean', default: false }
                             }
                         }
                     }
@@ -202,17 +85,98 @@ export default {
                                 type: 'object',
                                 properties: {
                                     success: { type: 'boolean' },
-                                    list: { $ref: '#/components/schemas/List' }
+                                    stats: {
+                                        type: 'object',
+                                        properties: {
+                                            new: { type: 'integer' },
+                                            updated: { type: 'integer' }
+                                        }
+                                    },
+                                    duplicates: {
+                                        type: 'array',
+                                        items: { type: 'object' }
+                                    }
                                 }
                             }
                         }
                     }
                 },
-                404: {
-                    description: 'Not found',
+                default: {
+                    description: 'Error',
                     content: {
                         'application/json': {
                             schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    '/api/leads': {
+        get: {
+            operationId: 'getAll',
+            'x-eov-operation-handler': 'handlers/leadHandler',
+            summary: 'Get all leads',
+            security: [], // No authentication required
+            responses: {
+                200: {
+                    description: 'Success',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'array',
+                                items: { $ref: '#/components/schemas/Lead' }
+                            }
+                        }
+                    }
+                },
+                default: {
+                    description: 'Error',
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    '/api/leads/{id}': {
+        put: {
+            operationId: 'update',
+            'x-eov-operation-handler': 'handlers/leadHandler',
+            summary: 'Update lead',
+            security: [], // No authentication required
+            parameters: [
+                {
+                    name: 'id',
+                    in: 'path',
+                    required: true,
+                    schema: { type: 'string' }
+                }
+            ],
+            requestBody: {
+                required: true,
+                content: {
+                    'application/json': {
+                        schema: {
+                            type: 'object'
+                        }
+                    }
+                }
+            },
+            responses: {
+                200: {
+                    description: 'Success',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    success: { type: 'boolean' },
+                                    lead: { $ref: '#/components/schemas/Lead' }
+                                }
+                            }
                         }
                     }
                 },
@@ -228,9 +192,9 @@ export default {
         },
         delete: {
             operationId: 'remove',
-            'x-eov-operation-handler': 'handlers/lists',
-            summary: 'Soft delete a list',
-            security: [],
+            'x-eov-operation-handler': 'handlers/leadHandler',
+            summary: 'Delete lead',
+            security: [], // No authentication required
             parameters: [
                 {
                     name: 'id',
@@ -241,7 +205,7 @@ export default {
             ],
             responses: {
                 200: {
-                    description: 'Deleted',
+                    description: 'Success',
                     content: {
                         'application/json': {
                             schema: {
@@ -254,11 +218,43 @@ export default {
                         }
                     }
                 },
-                404: {
-                    description: 'Not found',
+                default: {
+                    description: 'Error',
                     content: {
                         'application/json': {
                             schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    '/api/leads/{id}/analyze': {
+        post: {
+            operationId: 'analyze',
+            'x-eov-operation-handler': 'handlers/leadHandler',
+            summary: 'Analyze lead with AI',
+            security: [], // No authentication required
+            parameters: [
+                {
+                    name: 'id',
+                    in: 'path',
+                    required: true,
+                    schema: { type: 'string' }
+                }
+            ],
+            responses: {
+                200: {
+                    description: 'Success',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    success: { type: 'boolean' },
+                                    lead: { $ref: '#/components/schemas/Lead' }
+                                }
+                            }
                         }
                     }
                 },
@@ -274,4 +270,3 @@ export default {
         }
     }
 };
-

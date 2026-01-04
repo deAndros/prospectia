@@ -1,5 +1,5 @@
-import Lead from './Lead.js';
-import List from './List.js';
+import Lead from './leadModel.js';
+import List from './listModel.js';
 
 export {
     Lead,

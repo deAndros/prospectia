@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useUpdateLead, useDeleteLead } from '../hooks/useLeads'
+import { useUpdateLead, useDeleteLead } from '../hooks/leadHooks'
 import HeaderActions from './LeadDetail/HeaderActions'
 import DeleteConfirm from './LeadDetail/DeleteConfirm'
 import LeadEditForm from './LeadDetail/LeadEditForm'

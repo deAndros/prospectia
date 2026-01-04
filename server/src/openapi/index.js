@@ -25,7 +25,7 @@ export default {
         '/ping': {
             get: {
                 operationId: 'ping',
-                'x-eov-operation-handler': 'handlers/status',
+                'x-eov-operation-handler': 'handlers/statusHandler',
                 security: [],
                 responses: {
                     200: {
@@ -49,7 +49,7 @@ export default {
         '/ready': {
             get: {
                 operationId: 'getStatus',
-                'x-eov-operation-handler': 'handlers/status',
+                'x-eov-operation-handler': 'handlers/statusHandler',
                 security: [],
                 responses: {
                     200: {
@@ -80,7 +80,7 @@ export default {
         '/health': {
             get: {
                 operationId: 'getHealth',
-                'x-eov-operation-handler': 'handlers/status',
+                'x-eov-operation-handler': 'handlers/statusHandler',
                 security: [],
                 responses: {
                     200: {

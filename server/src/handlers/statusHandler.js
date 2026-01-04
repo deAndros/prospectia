@@ -1,4 +1,4 @@
-import StatusController from '#controllers/status.js';
+import StatusController from '#controllers/statusController.js';
 
 export const ping = StatusController.ping;
 export const getStatus = StatusController.getStatus;

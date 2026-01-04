@@ -8,7 +8,7 @@ const getScoreTone = (score) => {
     return { bucket: 'Nurture', cls: "bg-zinc-600 border-zinc-500", label: 'Bajo' };
 };
 
-const ProspectTableRow = ({ lead, onSelectLead, onRemove, onAnalyze, analyzingId }) => {
+const ProspectTableRow = ({ lead, onSelectLead, onRemove, onDelete, onAnalyze, analyzingId }) => {
     return (
         <tr
             className="group/row bg-white/[0.03] backdrop-blur-sm border border-white/5 hover:bg-white/[0.07] transition-all cursor-pointer rounded-2xl"
@@ -75,10 +75,10 @@ const ProspectTableRow = ({ lead, onSelectLead, onRemove, onAnalyze, analyzingId
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
-                            onRemove(lead._id);
+                            onDelete(lead);
                         }}
                         className="p-2 text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all"
-                        title="Eliminar de la lista"
+                        title="Eliminar permanentemente"
                     >
                         <Trash2 size={16} />
                     </button>

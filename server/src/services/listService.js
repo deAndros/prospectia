@@ -1,5 +1,5 @@
-import List from '#models/List.js';
-import Lead from '#models/Lead.js';
+import List from '#models/listModel.js';
+import Lead from '#models/leadModel.js';
 
 const baseLeadFilter = { isDeleted: { $ne: true } };
 

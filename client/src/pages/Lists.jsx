@@ -7,7 +7,8 @@ import {
     useCreateList,
     useUpdateList,
     useDeleteList,
-} from '../hooks/useLists'
+} from '../hooks/listHooks'
+import { useDeleteLead } from '../hooks/leadHooks'
 
 // Core Components
 import ConfirmModal from '../components/ConfirmModal'
@@ -29,6 +30,7 @@ const Lists = () => {
     const createMutation = useCreateList()
     const updateMutation = useUpdateList()
     const deleteMutation = useDeleteList()
+    const leadDeleteMutation = useDeleteLead()
 
     // UI State
     const [selectedListId, setSelectedListId] = useState(null)
@@ -37,6 +39,7 @@ const Lists = () => {
     const [showWizard, setShowWizard] = useState(false)
     const [showAddModal, setShowAddModal] = useState(false)
     const [confirmDelete, setConfirmDelete] = useState(null)
+    const [prospectToDelete, setProspectToDelete] = useState(null)
     const [selectedLead, setSelectedLead] = useState(null)
 
     // Memoized Data
@@ -84,16 +87,20 @@ const Lists = () => {
         }
     }
 
-    const handleDeleteList = async () => {
-        if (!confirmDelete) return
+    const handleDeleteLead = async () => {
+        if (!prospectToDelete) return
         try {
-            await deleteMutation.mutateAsync(confirmDelete._id)
-            if (selectedListId === confirmDelete._id) setSelectedListId(null)
-            setConfirmDelete(null)
+            await leadDeleteMutation.mutateAsync(prospectToDelete._id)
+            setProspectToDelete(null)
         } catch (err) {
             alert('Error: ' + err.message)
         }
     }
+
+    const leadMemberships = useMemo(() => {
+        if (!prospectToDelete) return []
+        return lists.filter(l => (l.prospects || []).includes(prospectToDelete._id))
+    }, [prospectToDelete, lists])
 
     return (
         <div className="max-w-[1600px] mx-auto h-[calc(100vh-8rem)] flex flex-col">
@@ -124,17 +131,14 @@ const Lists = () => {
                             </div>
                         </div>
 
-                        {selectedList && (
-                            <div className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-1 mr-2 italic">
-                                Sincronizado vía Waalaxy Engine
-                            </div>
-                        )}
                     </div>
 
                     <ProspectTable
                         leads={tableLeads}
                         selectedList={selectedList}
+                        lists={lists}
                         onRemove={handleRemoveFromList}
+                        onDelete={setProspectToDelete}
                         onAddClick={() => setShowAddModal(true)}
                         onSelectLead={setSelectedLead}
                     />
@@ -162,9 +166,35 @@ const Lists = () => {
                     isOpen={!!confirmDelete}
                     title="Eliminar Lista"
                     message={`¿Estás seguro que deseas eliminar la lista "${confirmDelete.name}"? Esta acción no se puede deshacer.`}
-                    onConfirm={handleDeleteList}
+                    onConfirm={async () => {
+                        if (!confirmDelete) return
+                        try {
+                            await deleteMutation.mutateAsync(confirmDelete._id)
+                            if (selectedListId === confirmDelete._id) setSelectedListId(null)
+                            setConfirmDelete(null)
+                        } catch (err) {
+                            alert('Error: ' + err.message)
+                        }
+                    }}
                     onCancel={() => setConfirmDelete(null)}
                     tone="danger"
+                />
+            )}
+
+            {prospectToDelete && (
+                <ConfirmModal
+                    isOpen={!!prospectToDelete}
+                    title="Eliminar Prospecto"
+                    message={`¿Estás seguro que deseas eliminar a "${prospectToDelete.name}" de forma permanente?`}
+                    details={leadMemberships.length > 0
+                        ? `Este prospecto forma parte de ${leadMemberships.length} lista(s): ${leadMemberships.map(l => l.name).join(', ')}.`
+                        : "Esta acción lo eliminará de todo el sistema y de cualquier lista a la que pertenezca."
+                    }
+                    confirmText="Eliminar permanentemente"
+                    onConfirm={handleDeleteLead}
+                    onCancel={() => setProspectToDelete(null)}
+                    tone="danger"
+                    isLoading={leadDeleteMutation.isPending}
                 />
             )}
 

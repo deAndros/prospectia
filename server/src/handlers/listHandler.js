@@ -1,4 +1,4 @@
-import ListsController from '#controllers/lists.js';
+import ListsController from '#controllers/listController.js';
 
 export const create = ListsController.create;
 export const getAll = ListsController.getAll;

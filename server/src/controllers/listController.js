@@ -1,4 +1,4 @@
-import * as listsService from '#services/lists.js';
+import * as listsService from '#services/listService.js';
 import logger from '#helpers/logger.js';
 
 export const create = async (req, res) => {
