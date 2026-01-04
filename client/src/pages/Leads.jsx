@@ -1,161 +1,212 @@
-import { useState, useMemo } from 'react';
-import { Search, AlertCircle } from 'lucide-react';
-import { useLeads, useAnalyzeLead } from '../hooks/leadHooks';
-import { useLists } from '../hooks/listHooks';
+import { useMemo, useState } from 'react'
+import { Users } from 'lucide-react'
+import {
+    useLists,
+    useListOptions,
+    useLeadsForLists,
+    useCreateList,
+    useUpdateList,
+    useDeleteList,
+} from '../hooks/listHooks'
+import { useDeleteLead } from '../hooks/leadHooks'
 
-import { motion, AnimatePresence } from 'framer-motion';
-import LeadDetailModal from '../components/LeadDetailModal';
+// Core Components
+import ConfirmModal from '../components/ConfirmModal'
+import LeadDetailModal from '../components/LeadDetailModal'
 
-// Modular Components
-import LeadsHeader from '../components/Leads/LeadsHeader';
-import LeadsFilterBar from '../components/Leads/LeadsFilterBar';
-import LeadsGrid from '../components/Leads/LeadsGrid';
-import LeadsList from '../components/Leads/LeadsList';
-
-const MotionDiv = motion.div;
+// List-specific modular components
+import ListsSidebar from '../components/Lists/ListsSidebar'
+import ProspectTable from '../components/Lists/ProspectTable'
+import Wizard from '../components/Lists/Wizard'
+import AddProspectModal from '../components/Lists/AddProspectModal'
 
 const Leads = () => {
-    const { data: leads = [] } = useLeads();
-    const { data: lists = [] } = useLists();
-    const { mutateAsync: analyzeLead } = useAnalyzeLead();
+    // Queries
+    const { data: lists = [] } = useLists()
+    const { data: options = { countries: [], niches: [] } } = useListOptions()
+    const { data: leads = [] } = useLeadsForLists()
 
-    const [selectedLead, setSelectedLead] = useState(null);
-    const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
-    const [analysisError, setAnalysisError] = useState(null);
+    // Mutations
+    const createMutation = useCreateList()
+    const updateMutation = useUpdateList()
+    const deleteMutation = useDeleteList()
+    const leadDeleteMutation = useDeleteLead()
 
-    // Filters
-    const [searchTerm, setSearchTerm] = useState('');
-    const [countryFilter, setCountryFilter] = useState('');
-    const [nicheFilter, setNicheFilter] = useState('');
+    // UI State
+    const [selectedListId, setSelectedListId] = useState(null)
+    const [listSearch, setListSearch] = useState('')
+    const [sortBy, setSortBy] = useState('newest') // newest | alpha
+    const [showWizard, setShowWizard] = useState(false)
+    const [showAddModal, setShowAddModal] = useState(false)
+    const [confirmDelete, setConfirmDelete] = useState(null)
+    const [prospectToDelete, setProspectToDelete] = useState(null)
+    const [selectedLead, setSelectedLead] = useState(null)
 
-    const [localAnalyzingId, setLocalAnalyzingId] = useState(null);
+    // Memoized Data
+    const selectedList = useMemo(() => lists.find(l => l._id === selectedListId), [lists, selectedListId])
 
-    const handleAnalyzeImproved = async (e, lead) => {
-        e.stopPropagation();
-        setLocalAnalyzingId(lead._id);
-        setAnalysisError(null);
+    const filteredLists = useMemo(() => {
+        let result = lists.filter(l => l.name.toLowerCase().includes(listSearch.toLowerCase()))
+        if (sortBy === 'alpha') result.sort((a, b) => a.name.localeCompare(b.name))
+        else result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        return result
+    }, [lists, listSearch, sortBy])
+
+    const tableLeads = useMemo(() => {
+        if (!selectedList) return leads
+        const prospectIds = new Set(selectedList.prospects || [])
+        return leads.filter(l => prospectIds.has(l._id))
+    }, [leads, selectedList])
+
+    // Handlers
+    const handleCreateList = async (data) => {
         try {
-            await analyzeLead(lead._id);
-        } catch (error) {
-            setAnalysisError(error.message || 'No se pudo completar el análisis automáticamente.');
-        } finally {
-            setLocalAnalyzingId(null);
+            await createMutation.mutateAsync(data)
+        } catch (err) {
+            alert('Error: ' + err.message)
         }
-    };
+    }
 
-    const filteredLeads = useMemo(() => {
-        let result = leads;
-
-        if (searchTerm) {
-            result = result.filter(l => l.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    const handleRemoveFromList = async (prospectId) => {
+        if (!selectedList) return
+        const nextProspects = (selectedList.prospects || []).filter(id => id !== prospectId)
+        try {
+            await updateMutation.mutateAsync({ id: selectedList._id, data: { prospects: nextProspects } })
+        } catch (err) {
+            alert('Error: ' + err.message)
         }
+    }
 
-        if (countryFilter) {
-            result = result.filter(l => l.country === countryFilter);
+    const handleAddToList = async (prospectIds) => {
+        if (!selectedList) return
+        const nextProspects = [...new Set([...(selectedList.prospects || []), ...prospectIds])]
+        try {
+            await updateMutation.mutateAsync({ id: selectedList._id, data: { prospects: nextProspects } })
+        } catch (err) {
+            alert('Error: ' + err.message)
         }
+    }
 
-        if (nicheFilter) {
-            result = result.filter(l => l.niche === nicheFilter);
+    const handleDeleteLead = async () => {
+        if (!prospectToDelete) return
+        try {
+            await leadDeleteMutation.mutateAsync(prospectToDelete._id)
+            setProspectToDelete(null)
+        } catch (err) {
+            alert('Error: ' + err.message)
         }
+    }
 
-        return result;
-    }, [leads, searchTerm, countryFilter, nicheFilter]);
+    const leadMemberships = useMemo(() => {
+        if (!prospectToDelete) return []
+        return lists.filter(l => (l.prospects || []).includes(prospectToDelete._id))
+    }, [prospectToDelete, lists])
 
     return (
-        <div className="space-y-6 max-w-7xl mx-auto">
-            <AnimatePresence>
-                {analysisError && (
-                    <MotionDiv
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="bg-red-500/10 border border-red-500/20 text-red-300 p-4 rounded-xl flex items-start gap-3 backdrop-blur-sm"
-                    >
-                        <AlertCircle size={18} className="mt-0.5 text-red-400" />
-                        <div className="flex-1">
-                            <div className="font-semibold">No se pudo calcular el score</div>
-                            <div className="text-sm text-red-200/90 mt-1">{analysisError}</div>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={() => setAnalysisError(null)}
-                            className="text-red-200/80 hover:text-white text-sm font-semibold"
-                        >
-                            Cerrar
-                        </button>
-                    </MotionDiv>
-                )}
-            </AnimatePresence>
-
-            <LeadsHeader viewMode={viewMode} setViewMode={setViewMode} />
-
-            {/* Premium Frame Container */}
-            <div className="bg-zinc-900/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-                {/* Decorative gradients for the frame */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-50"></div>
-
-                <LeadsFilterBar
-                    searchTerm={searchTerm}
-                    setSearchTerm={setSearchTerm}
-                    countryFilter={countryFilter}
-                    setCountryFilter={setCountryFilter}
-                    nicheFilter={nicheFilter}
-                    setNicheFilter={setNicheFilter}
+        <div className="max-w-[1600px] mx-auto h-[calc(100vh-8rem)] flex flex-col">
+            <div className="flex flex-1 gap-12 min-h-0">
+                <ListsSidebar
+                    lists={lists}
+                    selectedListId={selectedListId}
+                    listSearch={listSearch}
+                    setListSearch={setListSearch}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    onAddList={() => setShowWizard(true)}
+                    onSelectList={setSelectedListId}
+                    onDeleteList={setConfirmDelete}
+                    filteredLists={filteredLists}
                 />
 
-                {/* Results */}
-                <AnimatePresence mode="wait">
-                    {viewMode === 'grid' ? (
-                        <LeadsGrid
-                            leads={filteredLeads}
-                            onSelectLead={setSelectedLead}
-                            onAnalyze={handleAnalyzeImproved}
-                            analyzingId={localAnalyzingId}
-                            lists={lists}
-                        />
-                    ) : (
-                        <LeadsList
-                            leads={filteredLeads}
-                            onSelectLead={setSelectedLead}
-                            lists={lists}
-                        />
-                    )}
-                </AnimatePresence>
-
-                {filteredLeads.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-24 text-center bg-zinc-900/40 backdrop-blur-sm rounded-2xl border border-white/5 border-dashed">
-                        <div className="bg-zinc-800/50 p-4 rounded-full mb-4 ring-1 ring-white/10 shadow-xl">
-                            <Search className="text-zinc-500" size={32} />
+                {/* Center Content */}
+                <div className="flex-1 flex flex-col min-w-0 pt-4 px-2">
+                    <div className="mb-8 flex items-end justify-between">
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-3xl backdrop-blur-xl">
+                            <span className="text-lg font-black text-white uppercase tracking-tighter">
+                                {selectedList ? selectedList.name : 'Mis Prospectos'}
+                            </span>
+                            <div className="flex items-center gap-1.5 ml-4 pl-4 border-l border-white/10">
+                                <Users size={16} className="text-indigo-400" />
+                                <span className="text-sm font-black text-indigo-300 bg-indigo-500/10 px-3 py-1 rounded-xl shadow-inner">{tableLeads.length}</span>
+                            </div>
                         </div>
-                        <h3 className="text-xl font-bold text-white mb-2">No se encontraron resultados</h3>
-                        <p className="text-zinc-400 max-w-sm mx-auto mb-6">
-                            No hay prospectos que coincidan con los filtros aplicados. Intenta con otros términos o limpia la búsqueda.
-                        </p>
-                        <button
-                            onClick={() => {
-                                setSearchTerm('');
-                                setCountryFilter('');
-                                setNicheFilter('');
-                            }}
-                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-indigo-500/20"
-                        >
-                            Limpiar filtros
-                        </button>
+
                     </div>
-                )}
+
+                    <ProspectTable
+                        leads={tableLeads}
+                        selectedList={selectedList}
+                        lists={lists}
+                        onRemove={handleRemoveFromList}
+                        onDelete={setProspectToDelete}
+                        onAddClick={() => setShowAddModal(true)}
+                        onSelectLead={setSelectedLead}
+                    />
+                </div>
             </div>
 
-            {/* Lead Detail Modal */}
-            <LeadDetailModal
-                isOpen={!!selectedLead}
-                lead={selectedLead}
-                onClose={() => setSelectedLead(null)}
-                onUpdate={() => {
-                    setSelectedLead(null);
-                }}
+            <Wizard
+                isOpen={showWizard}
+                onClose={() => setShowWizard(false)}
+                options={options}
+                leads={leads}
+                onCreate={handleCreateList}
             />
-        </div>
-    );
-};
 
-export default Leads;
+            <AddProspectModal
+                isOpen={showAddModal}
+                onClose={() => setShowAddModal(false)}
+                leads={leads}
+                currentProspects={selectedList?.prospects || []}
+                onAdd={handleAddToList}
+            />
+
+            {confirmDelete && (
+                <ConfirmModal
+                    isOpen={!!confirmDelete}
+                    title="Eliminar Lista"
+                    message={`¿Estás seguro que deseas eliminar la lista "${confirmDelete.name}"? Esta acción no se puede deshacer.`}
+                    onConfirm={async () => {
+                        if (!confirmDelete) return
+                        try {
+                            await deleteMutation.mutateAsync(confirmDelete._id)
+                            if (selectedListId === confirmDelete._id) setSelectedListId(null)
+                            setConfirmDelete(null)
+                        } catch (err) {
+                            alert('Error: ' + err.message)
+                        }
+                    }}
+                    onCancel={() => setConfirmDelete(null)}
+                    tone="danger"
+                />
+            )}
+
+            {prospectToDelete && (
+                <ConfirmModal
+                    isOpen={!!prospectToDelete}
+                    title="Eliminar Prospecto"
+                    message={`¿Estás seguro que deseas eliminar a "${prospectToDelete.name}" de forma permanente?`}
+                    details={leadMemberships.length > 0
+                        ? `Este prospecto forma parte de ${leadMemberships.length} lista(s): ${leadMemberships.map(l => l.name).join(', ')}.`
+                        : "Esta acción lo eliminará de todo el sistema y de cualquier lista a la que pertenezca."
+                    }
+                    confirmText="Eliminar permanentemente"
+                    onConfirm={handleDeleteLead}
+                    onCancel={() => setProspectToDelete(null)}
+                    tone="danger"
+                    isLoading={leadDeleteMutation.isPending}
+                />
+            )}
+
+            {selectedLead && (
+                <LeadDetailModal
+                    lead={selectedLead}
+                    isOpen={!!selectedLead}
+                    onClose={() => setSelectedLead(null)}
+                />
+            )}
+        </div>
+    )
+}
+
+export default Leads

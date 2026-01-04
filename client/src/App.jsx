@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Sidebar from './components/Sidebar';
 import Discovery from './pages/Discovery';
 import Leads from './pages/Leads';
-import Lists from './pages/Lists';
 
 function App() {
   return (
@@ -15,7 +14,6 @@ function App() {
             <Route path="/" element={<Navigate to="/discovery" replace />} />
             <Route path="/discovery" element={<Discovery />} />
             <Route path="/leads" element={<Leads />} />
-            <Route path="/lists" element={<Lists />} />
           </Routes>
         </main>
       </div>

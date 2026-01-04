@@ -10,7 +10,6 @@ const Sidebar = () => {
     { name: 'Tablero', icon: Home, path: '/' },
     { name: 'Descubrimiento', icon: Globe, path: '/discovery' },
     { name: 'Prospectos', icon: Users, path: '/leads' },
-    { name: 'Listas', icon: List, path: '/lists' },
   ]
 
   return (
