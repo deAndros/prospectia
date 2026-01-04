@@ -1,5 +1,5 @@
 /**
- * Custom Error class for API errors
+ * Clase de Error personalizada para errores de API
  */
 class ApiError extends Error {
     constructor(message, statusCode = 500, code = null) {
@@ -11,7 +11,7 @@ class ApiError extends Error {
 }
 
 /**
- * Send 404 Not Found response
+ * Enviar respuesta 404 No Encontrado
  */
 const send404 = (res, message = 'Resource not found') => {
     res.status(404).json({
@@ -21,7 +21,7 @@ const send404 = (res, message = 'Resource not found') => {
 };
 
 /**
- * Send generic error response
+ * Enviar respuesta de error genérica
  */
 const sendError = (res, message = 'Internal server error', statusCode = 500) => {
     res.status(statusCode).json({
@@ -31,7 +31,7 @@ const sendError = (res, message = 'Internal server error', statusCode = 500) => 
 };
 
 /**
- * Format error for OpenAPI response
+ * Formatear error para respuesta OpenAPI
  */
 const formatError = (error) => {
     return {

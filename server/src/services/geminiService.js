@@ -4,7 +4,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 
 export const discoverLeads = async (country, niche, maxResults = 5) => {
   try {
-    // robust model selection
+    // selección robusta de modelo
     const model = genAI.getGenerativeModel({
       model: 'gemini-2.0-flash-exp',
       apiVersion: 'v1beta',
@@ -53,7 +53,7 @@ export const discoverLeads = async (country, niche, maxResults = 5) => {
     const response = await result.response
     const text = response.text()
 
-    // Clean up potential markdown formatting in response (```json ... ```)
+    // Limpiar posible formato markdown en la respuesta (```json ... ```)
     const jsonStr = text
       .replace(/```json/g, '')
       .replace(/```/g, '')
@@ -61,17 +61,17 @@ export const discoverLeads = async (country, niche, maxResults = 5) => {
 
     let leads = JSON.parse(jsonStr)
 
-    // PROGRAMMATIC FILTERING (The "Enforcer")
-    // Filter out leads that don't meet the strict criteria:
-    // 1. Must have an official URL (not null)
-    // 2. Must have at least one social media profile
+    // FILTRADO PROGRAMÁTICO (El "Enforcer")
+    // Filtrar prospectos que no cumplen con criterios estrictos:
+    // 1. Debe tener una URL oficial (no nulo)
+    // 2. Debe tener al menos un perfil de red social
     const filteredLeads = leads.filter((lead) => {
       const hasUrl = typeof lead?.url === 'string' && lead.url.trim().length > 0
-      // We require an official URL because uniqueness + selection in the UI relies on `url`.
+      // Requerimos una URL oficial porque la unicidad + selección en la UI depende de `url`.
       return hasUrl
     })
 
-    // Sanitize leads to ensure critical fields are in expected format
+    // Sanitizar prospectos para asegurar que los campos críticos estén en el formato esperado
     return filteredLeads.map((lead) => ({
       ...lead,
       signals: Array.isArray(lead.signals) ? lead.signals : [],

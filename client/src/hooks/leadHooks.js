@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { leadApi } from '../lib/api';
 
 /**
- * Hook to fetch all leads
+ * Hook para obtener todos los prospectos
  */
 export const useLeads = () => {
   return useQuery({
@@ -12,7 +12,7 @@ export const useLeads = () => {
 };
 
 /**
- * Hook to discover leads via AI
+ * Hook para descubrir prospectos vía IA
  */
 export const useDiscoverLeads = () => {
   return useMutation({
@@ -21,21 +21,21 @@ export const useDiscoverLeads = () => {
 };
 
 /**
- * Hook to save leads to database
+ * Hook para guardar prospectos en la base de datos
  */
 export const useSaveLeads = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => leadApi.save(data),
     onSuccess: () => {
-      // Invalidate leads list to trigger a refetch
+      // Invalidar lista de prospectos para activar una recarga
       queryClient.invalidateQueries({ queryKey: ['leads'] });
     },
   });
 };
 
 /**
- * Hook to update a lead
+ * Hook para actualizar un prospecto
  */
 export const useUpdateLead = () => {
   const queryClient = useQueryClient();
@@ -48,7 +48,7 @@ export const useUpdateLead = () => {
 };
 
 /**
- * Hook to delete a lead
+ * Hook para eliminar un prospecto
  */
 export const useDeleteLead = () => {
   const queryClient = useQueryClient();
@@ -61,7 +61,7 @@ export const useDeleteLead = () => {
 };
 
 /**
- * Hook to analyze a lead with AI
+ * Hook para analizar un prospecto con IA
  */
 export const useAnalyzeLead = () => {
   const queryClient = useQueryClient();

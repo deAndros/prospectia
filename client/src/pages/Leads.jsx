@@ -10,29 +10,29 @@ import {
 } from '../hooks/listHooks'
 import { useDeleteLead } from '../hooks/leadHooks'
 
-// Core Components
+// Componentes principales
 import ConfirmModal from '../components/ConfirmModal'
 import LeadDetailModal from '../components/LeadDetailModal'
 
-// List-specific modular components
+// Componentes modulares específicos de listas
 import ListsSidebar from '../components/Lists/ListsSidebar'
 import ProspectTable from '../components/Lists/ProspectTable'
 import Wizard from '../components/Lists/Wizard'
 import AddProspectModal from '../components/Lists/AddProspectModal'
 
 const Leads = () => {
-    // Queries
+    // Consultas
     const { data: lists = [] } = useLists()
     const { data: options = { countries: [], niches: [] } } = useListOptions()
     const { data: leads = [] } = useLeadsForLists()
 
-    // Mutations
+    // Mutaciones
     const createMutation = useCreateList()
     const updateMutation = useUpdateList()
     const deleteMutation = useDeleteList()
     const leadDeleteMutation = useDeleteLead()
 
-    // UI State
+    // Estado de UI
     const [selectedListId, setSelectedListId] = useState(null)
     const [listSearch, setListSearch] = useState('')
     const [sortBy, setSortBy] = useState('newest') // newest | alpha
@@ -42,7 +42,7 @@ const Leads = () => {
     const [prospectToDelete, setProspectToDelete] = useState(null)
     const [selectedLead, setSelectedLead] = useState(null)
 
-    // Memoized Data
+    // Datos memorizados
     const selectedList = useMemo(() => lists.find(l => l._id === selectedListId), [lists, selectedListId])
 
     const filteredLists = useMemo(() => {
@@ -58,7 +58,7 @@ const Leads = () => {
         return leads.filter(l => prospectIds.has(l._id))
     }, [leads, selectedList])
 
-    // Handlers
+    // Manejadores
     const handleCreateList = async (data) => {
         try {
             await createMutation.mutateAsync(data)
@@ -118,7 +118,7 @@ const Leads = () => {
                     filteredLists={filteredLists}
                 />
 
-                {/* Center Content */}
+                {/* Contenido central */}
                 <div className="flex-1 flex flex-col min-w-0 pt-4 px-2">
                     <div className="mb-8 flex items-end justify-between">
                         <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded-3xl backdrop-blur-xl">

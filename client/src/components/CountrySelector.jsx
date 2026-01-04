@@ -34,12 +34,12 @@ const CountrySelector = ({ value, onChange }) => {
 
     const handleInputChange = (e) => {
         const next = e.target.value;
-        // Keep behavior consistent with NicheSelector: while typing, clear the selected value.
-        // The value will be set again only via selecting an option or an exact match on blur.
+        // Mantener comportamiento consistente con NicheSelector: mientras se escribe, borrar el valor seleccionado.
+        // El valor se establecerá nuevamente solo vía selección de una opción o una coincidencia exacta al perder el foco.
         if (value) onChange('');
         setSearchTerm(next);
         setIsOpen(true);
-        setActiveIndex(-1); // Reset selection on typing
+        setActiveIndex(-1); // Reiniciar selección al escribir
     };
 
     const handleKeyDown = (e) => {
@@ -73,7 +73,7 @@ const CountrySelector = ({ value, onChange }) => {
         }
     };
 
-    // Scroll active item into view
+    // Desplazar elemento activo a la vista
     useEffect(() => {
         if (isOpen && activeIndex >= 0 && listRef.current) {
             const list = listRef.current;
@@ -84,86 +84,85 @@ const CountrySelector = ({ value, onChange }) => {
         }
     }, [activeIndex, isOpen]);
 
-    const handleBlur = () => {
-        // Allow a small delay to handle click on dropdown items
-        setTimeout(() => {
-            const exactMatch = COUNTRIES.find(
-                c => c.name.toLowerCase() === searchTerm.toLowerCase()
-            );
+    // Permitir un pequeño retraso para manejar el clic en elementos desplegables
+    setTimeout(() => {
+        const exactMatch = COUNTRIES.find(
+            c => c.name.toLowerCase() === searchTerm.toLowerCase()
+        );
 
-            if (exactMatch) {
-                onChange(exactMatch.name);
-                setSearchTerm(exactMatch.name);
+        if (exactMatch) {
+            onChange(exactMatch.name);
+            setSearchTerm(exactMatch.name);
+        } else {
+            if (value) {
+                setSearchTerm(value);
             } else {
-                if (value) {
-                    setSearchTerm(value);
-                } else {
-                    setSearchTerm('');
-                    onChange('');
-                }
+                setSearchTerm('');
+                onChange('');
             }
-            // Only close if we're not interacting (handled by click outside usually, 
-            // but for blur we want to be careful not to kill the click)
-            // The preventDefault on mousedown handles the click.
-        }, 200);
-    };
+        }
+        // Solo cerrar si no estamos interactuando (manejado por clic afuera generalmente,
+        // pero para blur queremos tener cuidado de no matar el clic)
+        // El preventDefault en mousedown maneja el clic.
+    }, 200);
+};
 
-    const displayValue = isOpen ? searchTerm : (value || '');
+const displayValue = isOpen ? searchTerm : (value || '');
 
-    // Find selected country object for flag display in input
-    const selectedCountryObj = COUNTRIES.find(c => c.name.toLowerCase() === displayValue.toLowerCase());
+// Buscar objeto de país seleccionado para mostrar bandera en input
+const selectedCountryObj = COUNTRIES.find(c => c.name.toLowerCase() === displayValue.toLowerCase());
 
-    return (
-        <div className="relative" ref={dropdownRef}>
-            <div className="relative">
-                {selectedCountryObj ? (
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl pointer-events-none">
-                        {selectedCountryObj.flag}
-                    </div>
-                ) : (
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={18} />
-                )}
-                <input
-                    type="text"
-                    placeholder="Escribe para buscar país..."
-                    value={displayValue}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    onBlur={handleBlur}
-                    className={clsx(
-                        "w-full bg-black/40 border border-white/10 rounded-xl px-5 py-3 text-white text-base focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-zinc-600 shadow-inner pl-12 h-[50px]"
-                    )}
-                />
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={18} />
-            </div>
-
-            {isOpen && searchTerm.length > 0 && filteredCountries.length > 0 && (
-                <div
-                    ref={listRef}
-                    className="absolute top-full left-0 right-0 mt-2 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl max-h-60 overflow-y-auto z-[99999] divide-y divide-white/5"
-                >
-                    {filteredCountries.map((country, index) => (
-                        <button
-                            key={country.name}
-                            type="button"
-                            onMouseDown={(e) => e.preventDefault()}
-                            onClick={() => handleSelect(country.name)}
-                            className={clsx(
-                                "w-full text-left px-4 py-3 flex items-center justify-between group transition-colors",
-                                index === activeIndex ? "bg-white/10" : "hover:bg-white/5"
-                            )}
-                        >
-                            <span className="flex items-center gap-3 text-zinc-300 group-hover:text-white">
-                                <span className="text-xl">{country.flag}</span>
-                                {country.name}
-                            </span>
-                            {value === country.name && <Check size={16} className="text-indigo-400" />}
-                        </button>
-                    ))}
+return (
+    <div className="relative" ref={dropdownRef}>
+        <div className="relative">
+            {selectedCountryObj ? (
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl pointer-events-none">
+                    {selectedCountryObj.flag}
                 </div>
+            ) : (
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={18} />
             )}
+            <input
+                type="text"
+                placeholder="Escribe para buscar país..."
+                value={displayValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                onBlur={handleBlur}
+                className={clsx(
+                    "w-full bg-black/40 border border-white/10 rounded-xl px-5 py-3 text-white text-base focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-zinc-600 shadow-inner pl-12 h-[50px]"
+                )}
+            />
+            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={18} />
         </div>
-    );
+
+        {isOpen && searchTerm.length > 0 && filteredCountries.length > 0 && (
+            <div
+                ref={listRef}
+                className="absolute top-full left-0 right-0 mt-2 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl max-h-60 overflow-y-auto z-[99999] divide-y divide-white/5"
+            >
+                {filteredCountries.map((country, index) => (
+                    <button
+                        key={country.name}
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => handleSelect(country.name)}
+                        className={clsx(
+                            "w-full text-left px-4 py-3 flex items-center justify-between group transition-colors",
+                            index === activeIndex ? "bg-white/10" : "hover:bg-white/5"
+                        )}
+                    >
+                        <span className="flex items-center gap-3 text-zinc-300 group-hover:text-white">
+                            <span className="text-xl">{country.flag}</span>
+                            {country.name}
+                        </span>
+                        {value === country.name && <Check size={16} className="text-indigo-400" />}
+                    </button>
+                ))}
+            </div>
+        )}
+    </div>
+);
 };
 
 export default CountrySelector;

@@ -10,7 +10,7 @@ import {
   setDiscoveryState,
 } from '../state/discoveryState'
 
-// Modular Components
+// Componentes modulares
 import DiscoveryHeader from '../components/Discovery/DiscoveryHeader'
 import DiscoveryForm from '../components/Discovery/DiscoveryForm'
 import DiscoveryControls from '../components/Discovery/DiscoveryControls'
@@ -42,7 +42,7 @@ const Discovery = () => {
     new Set(Array.isArray(stored?.selectedLeads) ? stored.selectedLeads : [])
   )
 
-  // Mutations
+  // Mutaciones
   const {
     mutateAsync: discoverLeads,
     isPending: loading,
@@ -59,7 +59,7 @@ const Discovery = () => {
 
   const error = discoverError?.message || saveError?.message;
 
-  // Filtering & Sorting
+  // Filtrado y ordenamiento
   const [filterText, setFilterText] = useState(stored?.filterText || '')
   const [sortConfig, setSortConfig] = useState(
     stored?.sortConfig || { key: null, direction: 'asc' }
@@ -69,7 +69,7 @@ const Discovery = () => {
   )
   const [viewLead, setViewLead] = useState(null)
 
-  // Confirm flows
+  // Flujos de confirmación
   const [confirmType, setConfirmType] = useState(null)
   const [pendingOverwriteLeads, setPendingOverwriteLeads] = useState([])
   const [pendingOverwriteDuplicates, setPendingOverwriteDuplicates] = useState(

@@ -3,20 +3,20 @@ import jwt from 'jsonwebtoken';
 const { JWT_SECRET = 'your-secret-key-change-in-production' } = process.env;
 
 /**
- * Generate JWT token
- * @param {Object} payload - Data to encode in token
- * @param {String} expiresIn - Token expiration time (default: 24h)
- * @returns {String} JWT token
+ * Generar token JWT
+ * @param {Object} payload - Datos para codificar en el token
+ * @param {String} expiresIn - Tiempo de expiración del token (por defecto: 24h)
+ * @returns {String} Token JWT
  */
 export const generateToken = (payload, expiresIn = '24h') => {
     return jwt.sign(payload, JWT_SECRET, { expiresIn });
 };
 
 /**
- * Verify JWT token
- * @param {String} token - JWT token to verify
- * @returns {Object} Decoded token payload
- * @throws {Error} If token is invalid
+ * Verificar token JWT
+ * @param {String} token - Token JWT a verificar
+ * @returns {Object} Payload del token decodificado
+ * @throws {Error} Si el token es inválido
  */
 export const verifyToken = (token) => {
     try {
@@ -27,9 +27,9 @@ export const verifyToken = (token) => {
 };
 
 /**
- * Decode JWT token without verification
- * @param {String} token - JWT token to decode
- * @returns {Object|null} Decoded token payload or null
+ * Decodificar token JWT sin verificación
+ * @param {String} token - Token JWT a decodificar
+ * @returns {Object|null} Payload del token decodificado o null
  */
 export const decodeToken = (token) => {
     return jwt.decode(token);

@@ -2,12 +2,12 @@ import winston from 'winston';
 
 const { combine, timestamp, printf, colorize, errors } = winston.format;
 
-// Custom format for console output
+// Formato personalizado para salida de consola
 const consoleFormat = printf(({ level, message, timestamp, stack }) => {
     return `${timestamp} [${level}]: ${stack || message}`;
 });
 
-// Create logger instance
+// Crear instancia de logger
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
     format: combine(
@@ -16,7 +16,7 @@ const logger = winston.createLogger({
         winston.format.json()
     ),
     transports: [
-        // Console transport
+        // Transporte de consola
         new winston.transports.Console({
             format: combine(
                 colorize(),
@@ -27,7 +27,7 @@ const logger = winston.createLogger({
     ]
 });
 
-// Add file transports in production
+// Agregar transportes de archivo en producción
 if (process.env.NODE_ENV === 'production') {
     logger.add(new winston.transports.File({ 
         filename: 'logs/error.log', 

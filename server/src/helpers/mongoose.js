@@ -4,7 +4,7 @@ import logger from './logger.js';
 const { MONGO_URI, NODE_ENV } = process.env;
 
 /**
- * Configure mongoose connection
+ * Configurar conexión mongoose
  */
 const configure = () => {
     if (!MONGO_URI) {
@@ -24,16 +24,16 @@ const configure = () => {
         logger.warn('MongoDB disconnected');
     });
 
-    // Graceful shutdown
+    // Cierre ordenado (Graceful shutdown)
     process.on('SIGINT', async () => {
         await mongoose.connection.close();
         logger.info('MongoDB connection closed through app termination');
         process.exit(0);
     });
 
-    // Connect to MongoDB
+    // Conectar a MongoDB
     mongoose.connect(MONGO_URI, {
-        // Options are no longer needed in Mongoose 8+
+        // Las opciones ya no son necesarias en Mongoose 8+
     }).catch(err => {
         logger.error('Failed to connect to MongoDB:', err);
         process.exit(1);

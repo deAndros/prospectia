@@ -34,13 +34,13 @@ const NicheSelector = ({ value, onChange }) => {
 
     const handleInputChange = (e) => {
         const next = e.target.value;
-        // Prevent "free text" from being treated as a selected value in the parent.
-        // While typing, clear the selected value; it will be set again only via selecting an option
-        // or an exact match on blur.
+        // Evitar que "texto libre" sea tratado como valor seleccionado en el padre.
+        // Mientras se escribe, borrar el valor seleccionado; se establecerá de nuevo solo vía selección de opción
+        // o coincidencia exacta al perder el foco.
         if (value) onChange('');
         setSearchTerm(next);
         setIsOpen(true);
-        setActiveIndex(-1); // Reset selection on typing
+        setActiveIndex(-1); // Reiniciar selección al escribir
     };
 
     const handleKeyDown = (e) => {
@@ -74,7 +74,7 @@ const NicheSelector = ({ value, onChange }) => {
         }
     };
 
-    // Scroll active item into view
+    // Desplazar elemento activo a la vista
     useEffect(() => {
         if (isOpen && activeIndex >= 0 && listRef.current) {
             const list = listRef.current;
@@ -86,7 +86,7 @@ const NicheSelector = ({ value, onChange }) => {
     }, [activeIndex, isOpen]);
 
     const handleBlur = () => {
-        // Allow a small delay to handle click on dropdown items
+        // Permitir un pequeño retraso para manejar el clic en elementos desplegables
         setTimeout(() => {
             const exactMatch = NICHES.find(
                 n => n.name.toLowerCase() === searchTerm.toLowerCase()

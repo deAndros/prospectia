@@ -20,7 +20,7 @@ const DiscoveryResultRow = ({ lead, isSelected, onToggle, onClick, niche }) => {
                     className="rounded border-zinc-700 bg-zinc-800 text-indigo-600 focus:ring-indigo-500 cursor-pointer relative z-20"
                 />
             </td>
-            {/* Clickable Cells */}
+            {/* Celdas clickeables */}
             <td
                 className="px-6 py-4 cursor-pointer"
                 onClick={() => onClick(lead)}

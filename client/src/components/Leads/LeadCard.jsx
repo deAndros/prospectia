@@ -30,14 +30,14 @@ const LeadCard = ({ lead, onClick, onAnalyze, analyzingId, lists }) => {
             onClick={() => onClick(lead)}
             className="group relative bg-zinc-800/80 border border-white/10 rounded-2xl cursor-pointer overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(79,70,229,0.25)] hover:border-indigo-500/40 shadow-lg shadow-black/20 backdrop-blur-sm h-full flex flex-col"
         >
-            {/* Default slight gradient to make it pop */}
+            {/* Gradiente ligero por defecto para resaltar */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-30" />
 
-            {/* Card Glow Effect on Hover */}
+            {/* Efecto de resplandor de la tarjeta al pasar el cursor */}
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="absolute -inset-[1px] bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl opacity-0 group-hover:opacity-30 blur-sm transition-opacity duration-300 pointer-events-none" />
 
-            {/* Fixed Position "New" Badge */}
+            {/* Insignia "Nuevo" en posición fija */}
             {isNew(lead.createdAt) && (
                 <div className="absolute top-4 right-4 z-20">
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-500/40 uppercase tracking-wide">
@@ -53,7 +53,7 @@ const LeadCard = ({ lead, onClick, onAnalyze, analyzingId, lists }) => {
                     </h3>
                     <p className="text-zinc-400 text-sm mt-1.5 font-medium truncate">{lead.type}</p>
 
-                    {/* List Membership Badges */}
+                    {/* Insignias de membresía de lista */}
                     <div className="flex flex-wrap gap-1 mt-3">
                         {leadLists.map(l => (
                             <span key={l._id} className="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-[10px] font-bold uppercase tracking-tight truncate max-w-[120px]">

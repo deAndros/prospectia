@@ -27,7 +27,7 @@ const LeadDetailModal = ({ lead, isOpen, onClose, onUpdate }) => {
   const [formData, setFormData] = useState(EMPTY_FORM)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
-  // Mutations
+  // Mutaciones
   const { mutateAsync: updateLead, isPending: isUpdating } = useUpdateLead()
 
   const { mutateAsync: deleteLead, isPending: isDeleting } = useDeleteLead()
@@ -64,7 +64,7 @@ const LeadDetailModal = ({ lead, isOpen, onClose, onUpdate }) => {
   const handleSave = async () => {
     try {
       await updateLead({ id: lead._id, data: formData })
-      if (onUpdate) onUpdate() // Notify parent if needed (e.g. for closing selection)
+      if (onUpdate) onUpdate() // Notificar al padre si es necesario (ej. para cerrar selección)
       setIsEditing(false)
     } catch (error) {
       alert('Error al actualizar el prospecto: ' + (error.message || ''))
@@ -75,7 +75,7 @@ const LeadDetailModal = ({ lead, isOpen, onClose, onUpdate }) => {
     try {
       await deleteLead(lead._id)
       if (onUpdate) onUpdate()
-      onClose() // Close modal on delete
+      onClose() // Cerrar modal al eliminar
     } catch (error) {
       alert('Error al eliminar el prospecto: ' + (error.message || ''))
     }
@@ -98,7 +98,7 @@ const LeadDetailModal = ({ lead, isOpen, onClose, onUpdate }) => {
             onClick={(e) => e.stopPropagation()}
             className="bg-zinc-900 border border-white/10 w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl relative flex flex-col max-h-[90vh]"
           >
-            {/* Header Banner - Slightly taller */}
+            {/* Banner de cabecera - Ligeramente más alto */}
             <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-br from-indigo-900/40 via-purple-900/30 to-black/0 pointer-events-none" />
 
             <HeaderActions
@@ -109,7 +109,7 @@ const LeadDetailModal = ({ lead, isOpen, onClose, onUpdate }) => {
               onClose={onClose}
             />
 
-            {/* Delete Confirmation Overlay (Unchanged logic, just keeping structure) */}
+            {/* Superposición de confirmación de eliminación (lógica sin cambios, solo manteniendo estructura) */}
             {deleteConfirm && (
               <DeleteConfirm
                 onCancel={() => setDeleteConfirm(false)}
@@ -118,12 +118,12 @@ const LeadDetailModal = ({ lead, isOpen, onClose, onUpdate }) => {
               />
             )}
 
-            {/* Main Content */}
+            {/* Contenido principal */}
             <div className="relative z-10 px-8 pt-12 pb-8 overflow-y-auto custom-scrollbar flex flex-col h-full">
-              {/* Header Section */}
+              {/* Sección de cabecera */}
               <div className="mb-8 mt-4">
                 {' '}
-                {/* Added mt-4 to push down from banner edge */}
+                {/* Agregado mt-4 para empujar hacia abajo desde el borde del banner */}
                 {isEditing ? (
                   <LeadEditForm
                     formData={formData}
@@ -137,13 +137,13 @@ const LeadDetailModal = ({ lead, isOpen, onClose, onUpdate }) => {
                 )}
               </div>
 
-              {/* Score Breakdown Section */}
+              {/* Sección de desglose de puntaje */}
               <ScoreBreakdown
                 scoring={lead.scoring}
                 enrichment={lead.enrichment}
               />
 
-              {/* Details Grid - Better Spacing */}
+              {/* Cuadrícula de detalles - Mejor espaciado */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-white/5 mt-auto">
                 <SocialMediaList socialMedia={lead.social_media} />
                 <SignalsList signals={lead.signals} />

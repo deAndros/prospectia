@@ -2,7 +2,7 @@ import * as leadsService from '#services/leadService.js';
 import logger from '#helpers/logger.js';
 
 /**
- * Discover leads
+ * Descubrir prospectos
  */
 export const discover = async (req, res, next) => {
     try {
@@ -39,7 +39,7 @@ export const discover = async (req, res, next) => {
 };
 
 /**
- * Save leads
+ * Guardar prospectos
  */
 export const save = async (req, res, next) => {
     try {
@@ -58,7 +58,7 @@ export const save = async (req, res, next) => {
 };
 
 /**
- * Get all leads
+ * Obtener todos los prospectos
  */
 export const getAll = async (req, res, next) => {
     try {
@@ -71,7 +71,7 @@ export const getAll = async (req, res, next) => {
 };
 
 /**
- * Update lead
+ * Actualizar prospecto
  */
 export const update = async (req, res, next) => {
     try {
@@ -93,7 +93,7 @@ export const update = async (req, res, next) => {
 };
 
 /**
- * Delete lead (logical)
+ * Eliminar prospecto (lógico)
  */
 export const remove = async (req, res, next) => {
     try {
@@ -114,7 +114,7 @@ export const remove = async (req, res, next) => {
 };
 
 /**
- * Analyze lead with AI
+ * Analizar prospecto con IA
  */
 export const analyze = async (req, res, next) => {
     try {

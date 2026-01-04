@@ -25,7 +25,7 @@ const {
 const pkg = packageJson();
 const IS_WINDOWS = process.platform === 'win32';
 
-// Map to store resolved route handlers
+// Mapa para almacenar los manejadores de ruta resueltos
 const Routes = new Map();
 
 class App {
@@ -65,12 +65,12 @@ class App {
     }
 
     _middleWares() {
-        // Body parser
+        // Parser de cuerpo (Body parser)
         this.app.use(express.json({ limit: BODY_LIMIT }));
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
 
-        // CORS configuration
+        // Configuración CORS
         if (NODE_ENV === 'development') {
             this.app.use(cors({
                 credentials: true,
@@ -82,24 +82,24 @@ class App {
             this.app.use(helmet.noSniff());
             this.app.use(helmet.referrerPolicy({ policy: 'same-origin' }));
             
-            // You can configure CORS whitelist here for production
+            // Aquí puedes configurar la lista blanca de CORS para producción
             this.app.use(cors({
                 credentials: true,
                 origin: process.env.ALLOWED_ORIGINS?.split(',') || []
             }));
         }
 
-        // AUTHENTICATION MIDDLEWARE (COMMENTED - Ready to use when needed)
-        // To enable authentication, uncomment the lines below:
+        // MIDDLEWARE DE AUTENTICACIÓN (COMENTADO - Listo para usar cuando sea necesario)
+        // Para habilitar la autenticación, descomenta las líneas a continuación:
         // import { authenticate } from '#routes/middleWares/index.js';
-        // this.app.use('/api/leads', authenticate); // Protect all /api/leads routes
+        // this.app.use('/api/leads', authenticate); // Proteger todas las rutas /api/leads
         // 
-        // Then, remove "security: []" from  endpoints in openapi/api/leads.js
-        // to enforce authentication via OpenAPI spec
+        // Luego, elimina "security: []" de los endpoints en openapi/api/leads.js
+        // para forzar la autenticación vía especificación OpenAPI
     }
 
     _routes() {
-        // API Documentation endpoint
+        // Endpoint de Documentación de API
         this.app.get('/docs', (_, res) => {
             res.send(`
                 <!DOCTYPE html>
@@ -136,11 +136,11 @@ class App {
 
         const basePath = join(__dirname);
 
-        // Expose OpenAPI spec
+        // Exponer especificación OpenAPI
         this.app.get('/docs/swagger.json', (_, res) => res.json(apiSpec));
         this.app.get('/openapi.json', (_, res) => res.json(apiSpec));
 
-        // OpenAPI validator and operation handler
+        // Validador OpenAPI y manejador de operaciones
         this.app.use(middleware.middleware({
             apiSpec,
             validateRequests: true,
@@ -195,7 +195,7 @@ class App {
             }
         }));
 
-        // Additional routes (fallbacks, etc.)
+        // Rutas adicionales (fallbacks, etc.)
         Router.configure(this.app);
     }
 }

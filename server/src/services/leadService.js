@@ -3,14 +3,14 @@ import Lead from '#models/leadModel.js';
 import * as geminiService from './geminiService.js';
 
 /**
- * Discover leads using Gemini AI
+ * Descubrir prospectos usando IA Gemini
  */
 export const discoverLeads = async (country, niche, maxResults = 5) => {
     return await geminiService.discoverLeads(country, niche, maxResults);
 };
 
 /**
- * Save multiple leads to database
+ * Guardar múltiples prospectos en la base de datos
  */
 export const saveLeads = async (leadsData, country, niche, overwrite = false) => {
     if (!Array.isArray(leadsData) || leadsData.length === 0) {
@@ -21,12 +21,12 @@ export const saveLeads = async (leadsData, country, niche, overwrite = false) =>
     let updatedCount = 0;
     const duplicates = [];
 
-    // Get all URLs from incoming leads
+    // Obtener todas las URLs de los prospectos entrantes
     const urls = leadsData
         .map((l) => String(l?.url || '').trim())
         .filter(Boolean);
 
-    // Find existing leads with these URLs
+    // Encontrar prospectos existentes con estas URLs
     const existing = urls.length
         ? await Lead.find({ url: { $in: urls } })
               .select('_id url name isDeleted')
@@ -43,7 +43,7 @@ export const saveLeads = async (leadsData, country, niche, overwrite = false) =>
 
         const existingDoc = existingByUrl.get(url);
         
-        // If exists and not overwriting, add to duplicates
+        // Si existe y no se sobrescribe, agregar a duplicados
         if (existingDoc && !overwrite) {
             duplicates.push({
                 url,
@@ -57,7 +57,7 @@ export const saveLeads = async (leadsData, country, niche, overwrite = false) =>
             continue;
         }
 
-        // Upsert operation
+        // Operación upsert
         ops.push({
             updateOne: {
                 filter: { url },
@@ -71,7 +71,7 @@ export const saveLeads = async (leadsData, country, niche, overwrite = false) =>
                         type: leadData.type,
                         signals: leadData.signals,
                         social_media: leadData.social_media || [],
-                        isDeleted: false, // revive if it was logically deleted
+                        isDeleted: false, // revivir si fue eliminado lógicamente
                     },
                     $setOnInsert: { status: 'new' },
                 },
@@ -93,21 +93,21 @@ export const saveLeads = async (leadsData, country, niche, overwrite = false) =>
 };
 
 /**
- * Get all leads (excluding deleted)
+ * Obtener todos los prospectos (excluyendo eliminados)
  */
 export const getAllLeads = async () => {
     return await Lead.find({ isDeleted: { $ne: true } }).sort({ createdAt: -1 });
 };
 
 /**
- * Get lead by ID
+ * Obtener prospecto por ID
  */
 export const getLeadById = async (id) => {
     return await Lead.findById(id);
 };
 
 /**
- * Update lead
+ * Actualizar prospecto
  */
 export const updateLead = async (id, updateData) => {
     const lead = await Lead.findByIdAndUpdate(id, updateData, { new: true });
@@ -118,10 +118,10 @@ export const updateLead = async (id, updateData) => {
 };
 
 /**
- * Delete lead (logical delete)
+ * Eliminar prospecto (eliminación lógica)
  */
 export const deleteLead = async (id) => {
-    // 1. Mark as logically deleted
+    // 1. Marcar como eliminado lógicamente
     const lead = await Lead.findByIdAndUpdate(
         id,
         { isDeleted: true },
@@ -131,7 +131,7 @@ export const deleteLead = async (id) => {
         throw new Error('Lead not found');
     }
 
-    // 2. Remove from all lists
+    // 2. Eliminar de todas las listas
     const List = mongoose.model('List');
     await List.updateMany(
         { prospects: id },
@@ -142,7 +142,7 @@ export const deleteLead = async (id) => {
 };
 
 /**
- * Analyze lead using Gemini AI
+ * Analizar prospecto usando IA Gemini
  */
 export const analyzeLead = async (id) => {
     const lead = await Lead.findById(id);
@@ -150,10 +150,10 @@ export const analyzeLead = async (id) => {
         throw new Error('Lead not found');
     }
 
-    // Get enrichment data from Gemini
+    // Obtener datos de enriquecimiento de Gemini
     const enrichmentData = await geminiService.analyzeLead(lead);
 
-    // Validate enrichment data
+    // Validar datos de enriquecimiento
     const s = enrichmentData?.scores;
     const hasScores =
         s &&
@@ -168,7 +168,7 @@ export const analyzeLead = async (id) => {
         );
     }
 
-    // Calculate overall score
+    // Calcular puntaje general
     const sum =
         (Number(s.engagement) || 0) +
         (Number(s.vertical_affinity) || 0) +
@@ -176,13 +176,13 @@ export const analyzeLead = async (id) => {
         (Number(s.innovation_signals) || 0);
     const score = Math.max(0, Math.min(100, Math.round((sum / 40) * 100)));
 
-    // Determine bucket
+    // Determinar categoría (bucket)
     let bucket = 'Nurture';
     if (score >= 80) bucket = 'A';
     else if (score >= 60) bucket = 'B';
     else if (score >= 40) bucket = 'C';
 
-    // Update lead with enrichment and scoring
+    // Actualizar prospecto con enriquecimiento y puntaje
     lead.enrichment = enrichmentData;
     lead.scoring = {
         score,

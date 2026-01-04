@@ -4,14 +4,14 @@ import { send404, sendError } from '#helpers/error.js';
 import openapi from '#openapi/index.js';
 
 /**
- * Configure base routes
- * OpenAPI handles all /api routes automatically
+ * Configurar rutas base
+ * OpenAPI maneja todas las rutas /api automáticamente
  */
 const configure = (app) => {
     const router = Router();
 
-    // These routes are handled by OpenAPI middleware in app.js
-    // but we define fallbacks here for non-OpenAPI routes
+    // Estas rutas son manejadas por el middleware de OpenAPI en app.js
+    // pero definimos fallbacks aquí para rutas que no son de OpenAPI
     
     router.get('/', (_, res) => send404(res));
     router.get('*', (_, res) => sendError(res, 'Route not found', 404));

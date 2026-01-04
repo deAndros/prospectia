@@ -60,7 +60,7 @@ const ProspectTable = ({ leads, selectedList, lists, onRemove, onDelete, onAddCl
         return result;
     }, [leads, search, countryFilter, nicheFilter, sortConfig])
 
-    // Reset to page 1 when any filter or sort changes
+    // Reiniciar a la página 1 cuando cambie cualquier filtro u orden
     useEffect(() => {
         setCurrentPage(1)
     }, [search, countryFilter, nicheFilter, selectedList, sortConfig.key, sortConfig.direction])
@@ -116,7 +116,7 @@ const ProspectTable = ({ leads, selectedList, lists, onRemove, onDelete, onAddCl
                 </div>
 
                 <div className="flex items-center gap-4 mb-0.5">
-                    {/* Mini Pagination UI at Top */}
+                    {/* Mini UI de Paginación en la parte superior */}
                     {totalPages > 1 && (
                         <div className="flex items-center gap-4 px-4 h-[50px] bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl">
                             <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest whitespace-nowrap">
@@ -151,7 +151,7 @@ const ProspectTable = ({ leads, selectedList, lists, onRemove, onDelete, onAddCl
                         </button>
                     )}
 
-                    {/* View Toggle */}
+                    {/* Alternar vista */}
                     <div className="flex bg-white/5 p-1 rounded-2xl border border-white/10 h-[50px]">
                         <button
                             onClick={() => setViewMode('table')}
@@ -268,7 +268,7 @@ const ProspectTable = ({ leads, selectedList, lists, onRemove, onDelete, onAddCl
                 )}
             </div>
 
-            {/* Main Pagination Controls at Bottom */}
+            {/* Controles principales de paginación en la parte inferior */}
             {totalPages > 1 && (
                 <div className="mt-6 flex items-center justify-between px-6 py-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl">
                     <p className="text-xs text-zinc-500 font-bold">
