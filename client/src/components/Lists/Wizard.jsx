@@ -16,6 +16,11 @@ const Wizard = ({ isOpen, onClose, options, leads, onCreate }) => {
     const [scoreMin, setScoreMin] = useState(1)
     const [scoreMax, setScoreMax] = useState(100)
 
+    // Pagination states
+    const [countryPage, setCountryPage] = useState(1)
+    const [nichePage, setNichePage] = useState(1)
+    const ITEMS_PER_PAGE = 12
+
     useEffect(() => {
         if (!isOpen) {
             setStep(1)
@@ -24,6 +29,8 @@ const Wizard = ({ isOpen, onClose, options, leads, onCreate }) => {
             setSelectedNiches([])
             setScoreMin(1)
             setScoreMax(100)
+            setCountryPage(1)
+            setNichePage(1)
         }
     }, [isOpen])
 
@@ -98,7 +105,7 @@ const Wizard = ({ isOpen, onClose, options, leads, onCreate }) => {
                                 <span className="text-xs font-bold text-zinc-500">{selectedCountries.length} seleccionados</span>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
-                                {options.countries.map(c => (
+                                {options.countries.slice(0, countryPage * ITEMS_PER_PAGE).map(c => (
                                     <button
                                         key={c}
                                         onClick={() => toggleItem(selectedCountries, setSelectedCountries, c)}
@@ -114,6 +121,14 @@ const Wizard = ({ isOpen, onClose, options, leads, onCreate }) => {
                                     </button>
                                 ))}
                             </div>
+                            {options.countries.length > countryPage * ITEMS_PER_PAGE && (
+                                <button
+                                    onClick={() => setCountryPage(p => p + 1)}
+                                    className="w-full py-3 text-sm text-zinc-400 hover:text-white font-medium border border-white/5 rounded-xl hover:bg-white/5 transition-colors"
+                                >
+                                    Ver más países (+{options.countries.length - countryPage * ITEMS_PER_PAGE})
+                                </button>
+                            )}
                         </div>
                     )}
 
@@ -124,7 +139,7 @@ const Wizard = ({ isOpen, onClose, options, leads, onCreate }) => {
                                 <span className="text-xs font-bold text-zinc-500">{selectedNiches.length} seleccionados</span>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
-                                {options.niches.map(n => (
+                                {options.niches.slice(0, nichePage * ITEMS_PER_PAGE).map(n => (
                                     <button
                                         key={n}
                                         onClick={() => toggleItem(selectedNiches, setSelectedNiches, n)}
@@ -140,6 +155,14 @@ const Wizard = ({ isOpen, onClose, options, leads, onCreate }) => {
                                     </button>
                                 ))}
                             </div>
+                            {options.niches.length > nichePage * ITEMS_PER_PAGE && (
+                                <button
+                                    onClick={() => setNichePage(p => p + 1)}
+                                    className="w-full py-3 text-sm text-zinc-400 hover:text-white font-medium border border-white/5 rounded-xl hover:bg-white/5 transition-colors"
+                                >
+                                    Ver más rubros (+{options.niches.length - nichePage * ITEMS_PER_PAGE})
+                                </button>
+                            )}
                         </div>
                     )}
 

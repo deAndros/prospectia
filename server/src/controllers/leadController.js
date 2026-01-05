@@ -141,6 +141,22 @@ export const analyze = async (req, res, next) => {
     }
 };
 
+/**
+ * Obtener filtros disponibles
+ */
+export const getFilters = async (req, res, next) => {
+    try {
+        const filters = await leadsService.getFilters();
+        res.json({
+            success: true,
+            filters,
+        });
+    } catch (error) {
+        logger.error('Error in get filters:', error);
+        res.status(500).json({ error: 'Failed to fetch filters' });
+    }
+};
+
 export default {
     discover,
     save,
@@ -148,4 +164,5 @@ export default {
     update,
     remove,
     analyze,
+    getFilters,
 };

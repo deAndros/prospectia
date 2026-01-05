@@ -195,6 +195,21 @@ export const analyzeLead = async (id) => {
     return lead;
 };
 
+/**
+ * Obtener filtros (países y rubros disponibles)
+ */
+export const getFilters = async () => {
+    const [countries, niches] = await Promise.all([
+        Lead.distinct('country', { isDeleted: { $ne: true } }),
+        Lead.distinct('niche', { isDeleted: { $ne: true } }),
+    ]);
+
+    return {
+        countries: countries.filter(Boolean).sort(),
+        niches: niches.filter(Boolean).sort(),
+    };
+};
+
 export default {
     discoverLeads,
     saveLeads,
@@ -203,4 +218,5 @@ export default {
     updateLead,
     deleteLead,
     analyzeLead,
+    getFilters,
 };

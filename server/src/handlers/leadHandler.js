@@ -6,6 +6,7 @@ export const getAll = LeadsController.getAll;
 export const update = LeadsController.update;
 export const remove = LeadsController.remove;
 export const analyze = LeadsController.analyze;
+export const getFilters = LeadsController.getFilters;
 
 export default {
     discover,
@@ -13,5 +14,6 @@ export default {
     getAll,
     update,
     remove,
-    analyze
+    analyze,
+    getFilters
 };

@@ -4,6 +4,7 @@ import { listApi, leadApi } from '../lib/api'
 const LISTS_KEY = ['lists']
 const LISTS_OPTIONS_KEY = ['listsOptions']
 const LEADS_KEY = ['leads']
+const LEAD_FILTERS_KEY = ['leadFilters']
 
 export const useLists = () =>
   useQuery({
@@ -21,6 +22,12 @@ export const useLeadsForLists = () =>
   useQuery({
     queryKey: LEADS_KEY,
     queryFn: leadApi.getAll,
+  })
+
+export const useLeadFilters = () =>
+  useQuery({
+    queryKey: LEAD_FILTERS_KEY,
+    queryFn: leadApi.getFilters,
   })
 
 export const useCreateList = () => {

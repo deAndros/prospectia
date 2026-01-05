@@ -268,5 +268,49 @@ export default {
                 }
             }
         }
+    },
+    '/api/leads/filters': {
+        get: {
+            operationId: 'getFilters',
+            'x-eov-operation-handler': 'handlers/leadHandler',
+            summary: 'Get available filters (countries, niches)',
+            security: [], // No authentication required
+            responses: {
+                200: {
+                    description: 'Success',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    success: { type: 'boolean' },
+                                    filters: {
+                                        type: 'object',
+                                        properties: {
+                                            countries: {
+                                                type: 'array',
+                                                items: { type: 'string' }
+                                            },
+                                            niches: {
+                                                type: 'array',
+                                                items: { type: 'string' }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                default: {
+                    description: 'Error',
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                }
+            }
+        }
     }
 };

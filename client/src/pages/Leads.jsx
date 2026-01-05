@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Users } from 'lucide-react'
 import {
     useLists,
-    useListOptions,
+    useLeadFilters,
     useLeadsForLists,
     useCreateList,
     useUpdateList,
@@ -23,7 +23,8 @@ import AddProspectModal from '../components/Lists/AddProspectModal'
 const Leads = () => {
     // Consultas
     const { data: lists = [] } = useLists()
-    const { data: options = { countries: [], niches: [] } } = useListOptions()
+    const { data } = useLeadFilters()
+    const options = data?.filters || { countries: [], niches: [] }
     const { data: leads = [] } = useLeadsForLists()
 
     // Mutaciones

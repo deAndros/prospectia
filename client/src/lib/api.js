@@ -54,6 +54,7 @@ export const leadApi = {
   update: (id, data) => apiFetch(`/api/leads/${id}`, { method: 'PUT', body: data }),
   delete: (id) => apiFetch(`/api/leads/${id}`, { method: 'DELETE' }),
   analyze: (id) => apiFetch(`/api/leads/${id}/analyze`, { method: 'POST' }),
+  getFilters: () => apiFetch('/api/leads/filters'),
 };
 
 export const listApi = {
