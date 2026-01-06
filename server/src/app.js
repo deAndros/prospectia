@@ -12,6 +12,8 @@ import mongoose from '#helpers/mongoose.js';
 import Router from '#routes/index.js';
 import apiSpec from '#openapi/index.js';
 import { packageJson } from '#util/index.js';
+import { authenticate } from '#routes/middleWares/index.js';
+import mongoSanitize from 'express-mongo-sanitize';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -69,6 +71,7 @@ class App {
         this.app.use(express.json({ limit: BODY_LIMIT }));
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
+        this.app.use(mongoSanitize());
 
         // Configuración CORS
         if (NODE_ENV === 'development') {
@@ -89,11 +92,11 @@ class App {
             }));
         }
 
-        // MIDDLEWARE DE AUTENTICACIÓN (COMENTADO - Listo para usar cuando sea necesario)
+        // MIDDLEWARE DE AUTENTICACIÓN
         // Para habilitar la autenticación, descomenta las líneas a continuación:
-        // import { authenticate } from '#routes/middleWares/index.js';
-        // this.app.use('/api/leads', authenticate); // Proteger todas las rutas /api/leads
-        // 
+        this.app.use('/api/leads', authenticate); // Proteger todas las rutas /api/leads
+        this.app.use('/api/lists', authenticate); // Proteger todas las rutas /api/lists
+        
         // Luego, elimina "security: []" de los endpoints en openapi/api/leads.js
         // para forzar la autenticación vía especificación OpenAPI
     }

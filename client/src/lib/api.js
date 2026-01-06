@@ -1,20 +1,20 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 /**
- * Generic fetch wrapper for API calls
- * @param {string} endpoint - API endpoint (e.g., '/api/leads')
- * @param {object} options - Fetch options (method, body, headers, etc.)
- * @returns {Promise<any>} - Parsed JSON response
+ * Wrapper genérico para llamadas a la API
+ * @param {string} endpoint - Endpoint de la API (ej: '/api/leads')
+ * @param {object} options - Opciones de fetch (method, body, headers, etc.)
+ * @returns {Promise<any>} - Respuesta JSON parseada
  */
 export async function apiFetch(endpoint, options = {}) {
   const { body, ...customConfig } = options;
   const headers = { 'Content-Type': 'application/json', ...customConfig.headers };
 
-  // Set up auth token if available (prepared for authentication phase)
-  // const token = localStorage.getItem('token');
-  // if (token) {
-  //   headers.Authorization = `Bearer ${token}`;
-  // }
+  // Configurar token de autenticación si está disponible
+  const token = localStorage.getItem('token');
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   const config = {
     method: body ? 'POST' : 'GET',
@@ -30,13 +30,13 @@ export async function apiFetch(endpoint, options = {}) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    const error = new Error(errorData.message || 'API request failed');
+    const error = new Error(errorData.message || 'La solicitud a la API falló');
     error.status = response.status;
     error.data = errorData;
     throw error;
   }
 
-  // Handle empty responses (like 204 No Content)
+  // Manejar respuestas vacías (como 204 No Content)
   if (response.status === 204) {
     return null;
   }
@@ -45,7 +45,15 @@ export async function apiFetch(endpoint, options = {}) {
 }
 
 /**
- * Lead API methods
+ * Métodos de la API de Autenticación
+ */
+export const authApi = {
+  login: (credentials) => apiFetch('/users/login', { method: 'POST', body: credentials }),
+  register: (userData) => apiFetch('/users/register', { method: 'POST', body: userData }),
+};
+
+/**
+ * Métodos de la API de Prospectos (Leads)
  */
 export const leadApi = {
   discover: (data) => apiFetch('/api/leads/discover', { body: data }),

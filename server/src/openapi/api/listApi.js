@@ -4,7 +4,7 @@ export default {
             operationId: 'getAll',
             'x-eov-operation-handler': 'handlers/listHandler',
             summary: 'Get all active lists',
-            security: [],
+
             responses: {
                 200: {
                     description: 'Success',
@@ -31,7 +31,7 @@ export default {
             operationId: 'create',
             'x-eov-operation-handler': 'handlers/listHandler',
             summary: 'Create a new list',
-            security: [],
+
             requestBody: {
                 required: true,
                 content: {
@@ -85,7 +85,7 @@ export default {
             operationId: 'options',
             'x-eov-operation-handler': 'handlers/listHandler',
             summary: 'Get available niches and countries for list creation',
-            security: [],
+
             responses: {
                 200: {
                     description: 'Success',
@@ -123,7 +123,7 @@ export default {
             operationId: 'getOne',
             'x-eov-operation-handler': 'handlers/listHandler',
             summary: 'Get list by id',
-            security: [],
+
             parameters: [
                 {
                     name: 'id',
@@ -163,7 +163,7 @@ export default {
             operationId: 'update',
             'x-eov-operation-handler': 'handlers/listHandler',
             summary: 'Update list name or prospects (Custom only)',
-            security: [],
+
             parameters: [
                 {
                     name: 'id',
@@ -230,7 +230,7 @@ export default {
             operationId: 'remove',
             'x-eov-operation-handler': 'handlers/listHandler',
             summary: 'Soft delete a list',
-            security: [],
+
             parameters: [
                 {
                     name: 'id',

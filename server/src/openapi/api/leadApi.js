@@ -4,7 +4,7 @@ export default {
             operationId: 'discover',
             'x-eov-operation-handler': 'handlers/leadHandler',
             summary: 'Discover leads using AI',
-            security: [], // No authentication required
+
             requestBody: {
                 required: true,
                 content: {
@@ -55,7 +55,7 @@ export default {
             operationId: 'save',
             'x-eov-operation-handler': 'handlers/leadHandler',
             summary: 'Save leads to database',
-            security: [], // No authentication required
+
             requestBody: {
                 required: true,
                 content: {
@@ -117,7 +117,7 @@ export default {
             operationId: 'getAll',
             'x-eov-operation-handler': 'handlers/leadHandler',
             summary: 'Get all leads',
-            security: [], // No authentication required
+
             responses: {
                 200: {
                     description: 'Success',
@@ -146,7 +146,7 @@ export default {
             operationId: 'update',
             'x-eov-operation-handler': 'handlers/leadHandler',
             summary: 'Update lead',
-            security: [], // No authentication required
+
             parameters: [
                 {
                     name: 'id',
@@ -194,7 +194,7 @@ export default {
             operationId: 'remove',
             'x-eov-operation-handler': 'handlers/leadHandler',
             summary: 'Delete lead',
-            security: [], // No authentication required
+
             parameters: [
                 {
                     name: 'id',
@@ -234,7 +234,7 @@ export default {
             operationId: 'analyze',
             'x-eov-operation-handler': 'handlers/leadHandler',
             summary: 'Analyze lead with AI',
-            security: [], // No authentication required
+
             parameters: [
                 {
                     name: 'id',
@@ -274,7 +274,7 @@ export default {
             operationId: 'getFilters',
             'x-eov-operation-handler': 'handlers/leadHandler',
             summary: 'Get available filters (countries, niches)',
-            security: [], // No authentication required
+
             responses: {
                 200: {
                     description: 'Success',

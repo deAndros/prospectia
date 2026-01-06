@@ -41,6 +41,7 @@ const Leads = () => {
     const [showAddModal, setShowAddModal] = useState(false)
     const [confirmDelete, setConfirmDelete] = useState(null)
     const [prospectToDelete, setProspectToDelete] = useState(null)
+    const [confirmRemove, setConfirmRemove] = useState(null)
     const [selectedLead, setSelectedLead] = useState(null)
 
     // Datos memorizados
@@ -138,7 +139,7 @@ const Leads = () => {
                         leads={tableLeads}
                         selectedList={selectedList}
                         lists={lists}
-                        onRemove={handleRemoveFromList}
+                        onRemove={setConfirmRemove}
                         onDelete={setProspectToDelete}
                         onAddClick={() => setShowAddModal(true)}
                         onSelectLead={setSelectedLead}
@@ -161,6 +162,27 @@ const Leads = () => {
                 currentProspects={selectedList?.prospects || []}
                 onAdd={handleAddToList}
             />
+
+            {confirmRemove && (
+                <ConfirmModal
+                    isOpen={!!confirmRemove}
+                    title="Quitar de la Lista"
+                    message={`¿Deseas quitar a "${confirmRemove.name}" de la lista "${selectedList?.name}"?`}
+                    details="El prospecto no será eliminado del sistema, solo se quitará de esta lista específica."
+                    confirmText="Quitar de la lista"
+                    onConfirm={async () => {
+                        if (!confirmRemove) return
+                        try {
+                            await handleRemoveFromList(confirmRemove._id)
+                            setConfirmRemove(null)
+                        } catch (err) {
+                            alert('Error: ' + err.message)
+                        }
+                    }}
+                    onCancel={() => setConfirmRemove(null)}
+                    tone="warning"
+                />
+            )}
 
             {confirmDelete && (
                 <ConfirmModal

@@ -1,4 +1,7 @@
+import userSchemas from './userSchemas.js';
+
 export default {
+    ...userSchemas,
     Lead: {
         type: 'object',
         properties: {

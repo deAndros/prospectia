@@ -232,6 +232,7 @@ const ProspectTable = ({ leads, selectedList, lists, onRemove, onDelete, onAddCl
                                 <ProspectTableRow
                                     key={lead._id}
                                     lead={lead}
+                                    selectedList={selectedList}
                                     onSelectLead={onSelectLead}
                                     onRemove={onRemove}
                                     onDelete={onDelete}

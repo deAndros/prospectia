@@ -1,4 +1,4 @@
-import { Search, Trash2, Loader2, Calculator } from 'lucide-react'
+import { X, Loader2, Calculator } from 'lucide-react'
 import clsx from 'clsx'
 
 const getScoreTone = (score) => {
@@ -8,7 +8,7 @@ const getScoreTone = (score) => {
     return { bucket: 'Nurture', cls: "bg-zinc-600 border-zinc-500", label: 'Bajo' };
 };
 
-const ProspectTableRow = ({ lead, onSelectLead, onRemove, onDelete, onAnalyze, analyzingId }) => {
+const ProspectTableRow = ({ lead, selectedList, onSelectLead, onRemove, onDelete, onAnalyze, analyzingId }) => {
     return (
         <tr
             className="group/row bg-white/[0.03] backdrop-blur-sm border border-white/5 hover:bg-white/[0.07] transition-all cursor-pointer rounded-2xl"
@@ -66,22 +66,15 @@ const ProspectTableRow = ({ lead, onSelectLead, onRemove, onDelete, onAnalyze, a
             </td>
             <td className="px-6 py-4 last:rounded-r-2xl border-y border-r border-white/5 group-hover/row:border-white/10 text-right pr-6">
                 <div className="flex justify-end gap-1">
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onSelectLead(lead); }}
-                        className="p-2 text-zinc-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-xl transition-all"
-                    >
-                        <Search size={16} />
-                    </button>
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onDelete(lead);
-                        }}
-                        className="p-2 text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all"
-                        title="Eliminar permanentemente"
-                    >
-                        <Trash2 size={16} />
-                    </button>
+                    {selectedList && (
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onRemove(lead); }}
+                            className="p-2 text-zinc-500 hover:text-orange-400 hover:bg-orange-500/10 rounded-xl transition-all"
+                            title="Quitar de esta lista"
+                        >
+                            <X size={16} />
+                        </button>
+                    )}
                 </div>
             </td>
         </tr>
