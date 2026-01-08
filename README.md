@@ -110,21 +110,44 @@ prospect-compass/
 
 ---
 
-## 📡 Endpoints de API (Resumen)
+## 📡 API Endpoints (OpenAPI)
+
+La aplicación cuenta con una documentación interactiva completa bajo el estándar OpenAPI.
 
 | Método | Endpoint | Descripción |
 | :--- | :--- | :--- |
-| `POST` | `/users/register` | Registro de nuevo usuario |
-| `POST` | `/users/login` | Login tradicional |
-| `POST` | `/users/google-auth` | Autenticación con Google Code |
-| `PATCH` | `/api/users/profile` | Actualizar perfil de usuario |
-| `POST` | `/api/leads/discover` | Buscar nuevos leads con IA |
-| `GET` | `/api/leads` | Listado de leads guardados |
-| `POST` | `/api/leads/:id/analyze` | Ejecutar scoring de lead |
+| `POST` | `/users/register` | Registro de nuevo usuario (Local) |
+| `POST` | `/users/login` | Inicio de sesión tradicional |
+| `POST` | `/users/google-auth` | Autenticación con Google (OAuth2 Code) |
+| `GET` | `/users/me` | Obtener información del usuario actual |
+| `PATCH` | `/api/users/profile` | Actualizar perfil y foto de usuario |
+| `POST` | `/api/leads/discover` | Descubrimiento de leads mediante IA |
+| `GET` | `/api/leads` | Obtener listado de leads guardados |
+| `GET` | `/api/leads/:id` | Detalle de un lead específico |
+| `PUT` | `/api/leads/:id` | Actualización de información de lead |
+| `DELETE` | `/api/leads/:id` | Eliminación lógica de un lead |
+| `POST` | `/api/leads/:id/analyze` | Análisis profundo y scoring de lead |
 
 ---
 
-## � Instalación
+## 🗺️ Roadmap
+
+Próximas funcionalidades y mejoras planificadas:
+
+- [ ] **Usuarios (Baja)**: Implementación de eliminación de cuentas.
+- [ ] **Equipos (ABM + Roles)**: Gestión de equipos, administración y permisos.
+- [ ] **Verificación de Email**: Validación de identidad mediante correo electrónico.
+- [ ] **Búsqueda con n8n**: Integración con n8n para potenciar el descubrimiento.
+- [ ] **Campañas de Email (n8n)**: Automatización de outreach mediante flujos de n8n.
+- [ ] **Multi-LLM Factory**: Soporte para Anthropic, OpenAI y otros además de Gemini.
+- [ ] **Modelos Locales**: Entrenamiento e implementación de modelos on-premise.
+- [ ] **Exportación**: Descarga a CSV/Excel de prospectos y listas.
+- [ ] **Notificaciones**: Alertas por email integradas.
+- [ ] **Dashboard de Métricas**: Visualización de KPIs y rendimiento.
+
+---
+
+## 💻 Instalación
 
 1. **Clonar**: `git clone https://github.com/usuario/prospect-compass.git`
 2. **Servidor**:
@@ -139,9 +162,3 @@ prospect-compass/
    npm install
    npm run dev
    ```
-
----
-
-## 📄 Licencia
-
-Este proyecto es de uso privado. Todos los derechos reservados.
