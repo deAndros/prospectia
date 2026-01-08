@@ -55,6 +55,30 @@ const userController = {
         } catch (error) {
             next(error);
         }
+    },
+
+    /**
+     * Actualizar perfil de usuario
+     * @param {Object} req - Request de Express (con req.user del middleware de autenticación)
+     * @param {Object} res - Response de Express
+     */
+    updateProfile: async (req, res, next) => {
+        try {
+            const userId = req.user.id; // Usuario autenticado desde el JWT
+            const updates = req.body;
+
+            const updatedUser = await userService.updateUserProfile(userId, updates);
+
+            res.status(200).json({
+                code: 200,
+                message: 'Perfil actualizado exitosamente',
+                data: {
+                    user: updatedUser
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
     }
 };
 

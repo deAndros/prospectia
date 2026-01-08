@@ -96,6 +96,7 @@ class App {
         // Para habilitar la autenticación, descomenta las líneas a continuación:
         this.app.use('/api/leads', authenticate); // Proteger todas las rutas /api/leads
         this.app.use('/api/lists', authenticate); // Proteger todas las rutas /api/lists
+        this.app.use('/api/users/profile', authenticate); // Proteger endpoint de actualización de perfil
         
         // Luego, elimina "security: []" de los endpoints en openapi/api/leads.js
         // para forzar la autenticación vía especificación OpenAPI

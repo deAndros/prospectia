@@ -54,6 +54,11 @@ const userSchema = new mongoose.Schema({
     },
     lockUntil: {
         type: Date
+    },
+    profileImage: {
+        type: String,
+        // Almacena imagen como base64 o URL
+        default: null
     }
 }, {
     timestamps: true, // Crea createdAt y updatedAt automáticamente

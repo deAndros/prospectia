@@ -109,6 +109,61 @@ const userService = {
     },
 
     /**
+     * Actualizar perfil de usuario
+     * @param {String} userId - ID del usuario
+     * @param {Object} updates - Campos a actualizar
+     * @returns {Object} Usuario actualizado
+     */
+    updateUserProfile: async (userId, updates) => {
+        try {
+            const { email, firstName, lastName, profileImage } = updates;
+
+            // Si se está actualizando el email, verificar que no exista para otro usuario
+            if (email) {
+                const existingUser = await User.findOne({ 
+                    email, 
+                    _id: { $ne: userId } // Excluir al usuario actual
+                });
+                if (existingUser) {
+                    throw new ApiError('El correo electrónico ya está registrado por otro usuario', 409);
+                }
+            }
+
+            // Validar tamaño de imagen si se provee (base64)
+            if (profileImage && profileImage.startsWith('data:image')) {
+                const sizeInBytes = (profileImage.length * 3) / 4;
+                const maxSize = 2 * 1024 * 1024; // 2MB
+                if (sizeInBytes > maxSize) {
+                    throw new ApiError('La imagen es demasiado grande. Máximo 2MB', 400);
+                }
+            }
+
+            // Construir objeto de actualización solo con campos definidos
+            const updateData = {};
+            if (firstName !== undefined) updateData.firstName = firstName;
+            if (lastName !== undefined) updateData.lastName = lastName;
+            if (email !== undefined) updateData.email = email;
+            if (profileImage !== undefined) updateData.profileImage = profileImage;
+
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                updateData,
+                { new: true, runValidators: true }
+            );
+
+            if (!updatedUser) {
+                throw new ApiError('Usuario no encontrado', 404);
+            }
+
+            logger.info(`Perfil actualizado para usuario: ${updatedUser.email}`);
+            return updatedUser;
+        } catch (error) {
+            logger.error('Error en userService.updateUserProfile:', error);
+            throw error;
+        }
+    },
+
+    /**
      * Buscar usuario por ID
      * @param {String} id 
      * @returns {Object} Usuario

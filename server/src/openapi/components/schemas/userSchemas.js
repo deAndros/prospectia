@@ -15,6 +15,7 @@ export default {
             },
             emailVerified: { type: 'boolean' },
             lastLoginAt: { type: 'string', format: 'date-time' },
+            profileImage: { type: 'string', nullable: true },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' }
         }
@@ -35,6 +36,15 @@ export default {
         properties: {
             email: { type: 'string', format: 'email' },
             password: { type: 'string' }
+        }
+    },
+    UpdateProfileRequest: {
+        type: 'object',
+        properties: {
+            firstName: { type: 'string' },
+            lastName: { type: 'string' },
+            email: { type: 'string', format: 'email' },
+            profileImage: { type: 'string', nullable: true }
         }
     },
     AuthResponse: {

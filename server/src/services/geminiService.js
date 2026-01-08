@@ -33,7 +33,7 @@ export const discoverLeads = async (country, niche, maxResults = 5) => {
       - No inventes urls de redes sociales, asegurate que las redes sociales sean perfiles activos y que estén asociados a la entidad.
       
       REDES SOCIALES:
-      - Busca activamente perfiles en LinkedIn, Instagram, Facebook, Twitter/X y YouTube que sean de las entidades encontradas.
+      - Busca mediante scraping en los sitios web oficiales de las entidades encontradas los perfiles en las redes socialdes (Linkedin, Youtube, Instagram, Facebook, TikTok) de cada una. Si no encuentras alguno, no lo agregues, las url de las redes sociales deben extraerse si o si del sitio web oficial de cada entidad/prospecto (no inventar/alucinar una url).
       - **ESTIMA LA CANTIDAD DE SEGUIDORES DE CADA RED SOCIAL ENCONTRADA**: Estima una cantidad de seguidores para cada red social y añadelo al campo "followers" que retornas para esa red social. Por ejemplo:
                 {
                     "network": "LinkedIn",
@@ -90,6 +90,8 @@ export const discoverLeads = async (country, niche, maxResults = 5) => {
   }
 }
 
+
+//TODO: Implementar la posibilidad de incluir en el wizard prospectos sin score
 //TODO: Brindar posibilidad de recalcular score de lead en caso de que el agente cambie las redes sociales y ponga las correctas
 export const analyzeLead = async (lead) => {
   try {

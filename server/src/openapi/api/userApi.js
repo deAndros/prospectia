@@ -100,5 +100,86 @@ export default {
                 }
             }
         }
+    },
+    '/api/users/profile': {
+        patch: {
+            operationId: 'updateProfile',
+            'x-eov-operation-handler': 'controllers/userController',
+            summary: 'Actualizar perfil de usuario',
+            description: 'Permite al usuario actualizar su nombre, apellido, email y foto de perfil',
+            // Requiere autenticación JWT
+            requestBody: {
+                required: true,
+                content: {
+                    'application/json': {
+                        schema: {
+                            $ref: '#/components/schemas/UpdateProfileRequest'
+                        }
+                    }
+                }
+            },
+            responses: {
+                200: {
+                    description: 'Perfil actualizado exitosamente',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                type: 'object',
+                                properties: {
+                                    code: { type: 'integer' },
+                                    message: { type: 'string' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            user: { $ref: '#/components/schemas/User' }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                400: {
+                    description: 'Error de validación o imagen demasiado grande',
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                },
+                401: {
+                    description: 'No autenticado',
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                },
+                404: {
+                    description: 'Usuario no encontrado',
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                },
+                409: {
+                    description: 'El correo electrónico ya está registrado por otro usuario',
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                },
+                default: {
+                    description: 'Error',
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                }
+            }
+        }
     }
 };

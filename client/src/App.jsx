@@ -4,6 +4,7 @@ import Discovery from './pages/Discovery';
 import Leads from './pages/Leads';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
 
 const DashboardLayout = () => {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="/" element={<Navigate to="/discovery" replace />} />
           <Route path="/discovery" element={<Discovery />} />
           <Route path="/leads" element={<Leads />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </Router>
