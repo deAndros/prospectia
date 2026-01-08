@@ -1,4 +1,5 @@
 import User from '#models/userModel.js';
+import { OAuth2Client } from 'google-auth-library';
 import { hashPassword, comparePassword } from '#helpers/bcrypt.js';
 import { generateToken } from '#helpers/jsonWebToken.js';
 import logger from '#helpers/logger.js';
@@ -170,6 +171,92 @@ const userService = {
      */
     getUserById: async (id) => {
         return await User.findById(id);
+    },
+
+    /**
+     * Autenticación con Google (Login/Register) - Flujo Tradicional (Código)
+     * @param {String} code - Código de autorización enviado por el cliente
+     * @returns {Object} Token JWT de la app y datos del usuario
+     */
+    googleAuth: async (code) => {
+        try {
+            // El REDIRECT_URI debe coincidir exactamente con el del frontend
+            const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5173/auth/google/callback';
+            
+            const client = new OAuth2Client(
+                process.env.GOOGLE_CLIENT_ID,
+                process.env.GOOGLE_CLIENT_SECRET,
+                redirectUri
+            );
+            
+            // Intercambiar el código por tokens
+            const { tokens } = await client.getToken(code);
+            client.setCredentials(tokens);
+
+            // Verificar el idToken incluido en la respuesta de tokens
+            const ticket = await client.verifyIdToken({
+                idToken: tokens.id_token,
+                audience: process.env.GOOGLE_CLIENT_ID
+            });
+            
+            const payload = ticket.getPayload();
+            const { sub: googleId, email, given_name: firstName, family_name: lastName, picture: profileImage } = payload;
+
+            // 1. Buscar si ya existe por googleId
+            let user = await User.findOne({ googleId });
+
+            // 2. Si no existe por googleId, buscar por email
+            if (!user) {
+                user = await User.findOne({ email });
+                
+                if (user) {
+                    // Si existe por email, vincular la cuenta de Google
+                    user.googleId = googleId;
+                    if (!user.authProviders.includes('GOOGLE')) {
+                        user.authProviders.push('GOOGLE');
+                    }
+                    // Si no tiene imagen, usar la de Google
+                    if (!user.profileImage) {
+                        user.profileImage = profileImage;
+                    }
+                    await user.save();
+                    logger.info(`Cuenta de Google vinculada al usuario existente: ${email}`);
+                } else {
+                    // 3. Si no existe, crear un nuevo usuario
+                    user = new User({
+                        firstName: firstName || 'Usuario',
+                        lastName: lastName || 'Google',
+                        email,
+                        googleId,
+                        authProviders: ['GOOGLE'],
+                        emailVerified: true, // Google ya verificó el email
+                        profileImage: profileImage || null
+                    });
+                    await user.save();
+                    logger.info(`Nuevo usuario creado mediante Google: ${email}`);
+                }
+            }
+
+            // Actualizar último login
+            user.lastLoginAt = new Date();
+            await user.save();
+
+            // Generar token JWT de nuestra aplicación
+            const token = generateToken({
+                id: user._id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName
+            });
+
+            return {
+                token,
+                user
+            };
+        } catch (error) {
+            logger.error('Error en userService.googleAuth:', error);
+            throw new ApiError('Error al autenticar con Google', 401);
+        }
     }
 };
 

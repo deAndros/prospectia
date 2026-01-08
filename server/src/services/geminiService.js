@@ -14,6 +14,7 @@ export const discoverLeads = async (country, niche, maxResults = 5) => {
         },
       ],
     })
+    
     //TODO:Evaluar posibilidad de determinar fecha de ultima publicación en cada red social esto es para evaluar si la entidad está activa o no en la red social.
     const prompt = `
       Encuentra ${maxResults} organizaciones, instituciones, empresas y/o entidades oriundas de ${country} que operen en el rubro "${niche}" y que puedan estar interesadas en vender cursos de e-learning. 

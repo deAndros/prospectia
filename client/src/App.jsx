@@ -5,6 +5,7 @@ import Leads from './pages/Leads';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import GoogleCallback from './pages/GoogleCallback';
 
 const DashboardLayout = () => {
   return (
@@ -36,6 +37,7 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>

@@ -58,6 +58,30 @@ const userController = {
     },
 
     /**
+     * Autenticación con Google
+     * @param {Object} req - Request de Express
+     * @param {Object} res - Response de Express
+     */
+    googleAuth: async (req, res, next) => {
+        try {
+            const { code } = req.body;
+            
+            const { token, user } = await userService.googleAuth(code);
+            
+            res.status(200).json({
+                code: 200,
+                message: 'Autenticación con Google exitosa',
+                data: {
+                    user,
+                    token
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    /**
      * Actualizar perfil de usuario
      * @param {Object} req - Request de Express (con req.user del middleware de autenticación)
      * @param {Object} res - Response de Express

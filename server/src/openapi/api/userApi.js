@@ -101,6 +101,53 @@ export default {
             }
         }
     },
+    '/users/google-auth': {
+        post: {
+            operationId: 'googleAuth',
+            'x-eov-operation-handler': 'controllers/userController',
+            summary: 'Autenticación con Google',
+            description: 'Autenticar o registrar usuario mediante un idToken de Google',
+            security: [],
+            requestBody: {
+                required: true,
+                content: {
+                    'application/json': {
+                        schema: {
+                            $ref: '#/components/schemas/GoogleAuthRequest'
+                        }
+                    }
+                }
+            },
+            responses: {
+                200: {
+                    description: 'Autenticación exitosa',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/AuthResponse'
+                            }
+                        }
+                    }
+                },
+                401: {
+                    description: 'Token de Google inválido',
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                },
+                default: {
+                    description: 'Error',
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/Error' }
+                        }
+                    }
+                }
+            }
+        }
+    },
     '/api/users/profile': {
         patch: {
             operationId: 'updateProfile',

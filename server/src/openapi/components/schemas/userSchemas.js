@@ -60,5 +60,15 @@ export default {
                 }
             }
         }
+    },
+    GoogleAuthRequest: {
+        type: 'object',
+        required: ['code'],
+        properties: {
+            code: { 
+                type: 'string',
+                description: 'Código de autorización de Google recibido del cliente'
+            }
+        }
     }
 };

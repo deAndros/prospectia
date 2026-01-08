@@ -50,6 +50,7 @@ export async function apiFetch(endpoint, options = {}) {
 export const authApi = {
   login: (credentials) => apiFetch('/users/login', { method: 'POST', body: credentials }),
   register: (userData) => apiFetch('/users/register', { method: 'POST', body: userData }),
+  googleAuth: (code) => apiFetch('/users/google-auth', { method: 'POST', body: { code } }),
   updateProfile: (profileData) => apiFetch('/api/users/profile', { method: 'PATCH', body: profileData }),
 };
 
